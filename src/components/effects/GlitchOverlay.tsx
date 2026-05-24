@@ -65,7 +65,7 @@ export default function GlitchOverlay({ active, duration = 2200, onComplete }: G
     ];
 
     function draw(time: number) {
-      if (!ctx || !canvas) return;
+      if (!ctx || !canvas || !container) return;
       const w = window.innerWidth;
       const h = window.innerHeight;
 
