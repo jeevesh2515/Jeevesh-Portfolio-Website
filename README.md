@@ -2,7 +2,7 @@
 
 An elite, high-fidelity personal portfolio website engineered with a premium **Iron Man / J.A.R.V.I.S. Holographic HUD** aesthetic. Driven by procedural canvas rendering, scroll-synced physics, interactive AI chat protocols, and dynamic digital overlays, this represents a state-of-the-art interactive web experience.
 
-🚀 **Live Demo on GitHub**: [Jeevesh-Portfolio-Website](https://github.com/jeevesh2515/Jeevesh-Portfolio-Website)
+🚀 **Live Demo**: [jeevesh-portfolio-website-00.vercel.app](https://jeevesh-portfolio-website-00.vercel.app)
 
 ---
 

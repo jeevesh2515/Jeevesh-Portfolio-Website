@@ -54,7 +54,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-24 pb-12 md:py-0">
+    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-36 sm:pt-40 md:pt-44 lg:pt-52 pb-16 md:pb-0">
       {/* Floating Text — higher opacity for better visibility */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60 z-[1]">
         {FLOATING_WORDS.map((w, i) => (
