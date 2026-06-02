@@ -131,8 +131,8 @@ Deploying your portfolio to Vercel takes less than a minute:
 
 ---
 
-## 📄 License
+## 📄 License & Copyright
 
-This project is open-source and available under the [MIT License](LICENSE). Fell free to fork, customize, and make it your own!
+This project is proprietary. All rights reserved. You may view the source code for educational purposes, but you do not have permission to copy, modify, distribute, or host this website or any of its components under your own name.
 
 Developed by **[Jeevesh Singale](https://github.com/jeevesh2515)**.
