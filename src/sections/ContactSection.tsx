@@ -131,7 +131,7 @@ export default function ContactSection() {
         </div>
 
         <p className="font-terminal text-[10px] text-outline mt-6 reveal-up" style={{ transitionDelay: '0.8s' }}>
-          Right to work: UK Skilled Worker visa eligible · MSc from UK university
+          Right to work: UK Graduate visa (PSW) · Seeking Sponsorship
         </p>
       </div>
     </section>
