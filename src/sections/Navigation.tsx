@@ -22,18 +22,30 @@ export default function Navigation() {
 
   useEffect(() => {
     const sections = NAV_LINKS.map((l) => l.href.slice(1));
-    const observers: IntersectionObserver[] = [];
+    const activeSections = new Map<string, boolean>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          activeSections.set(entry.target.id, entry.isIntersecting);
+        });
+
+        // Find the last section in DOM order that is currently intersecting the detection zone
+        const currentActive = sections.reduce((active, id) => activeSections.get(id) ? id : active, '');
+        setActiveSection(currentActive);
+      },
+      {
+        rootMargin: '-20% 0px -55% 0px',
+        threshold: 0,
+      }
+    );
+
     sections.forEach((id) => {
       const el = document.getElementById(id);
-      if (!el) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => { if (entry.isIntersecting) setActiveSection(id); },
-        { threshold: 0.3 }
-      );
-      obs.observe(el);
-      observers.push(obs);
+      if (el) observer.observe(el);
     });
-    return () => observers.forEach((o) => o.disconnect());
+
+    return () => observer.disconnect();
   }, []);
 
   const handleClick = (href: string) => {
