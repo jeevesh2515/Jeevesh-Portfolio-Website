@@ -13,6 +13,7 @@ import CircuitBoardBackground from '@/components/CircuitBoardBackground';
 import ArcReactorHero from '@/components/ArcReactorHero';
 import JARVISChatbot from '@/components/JARVISChatbot';
 import JARVISLoader from '@/components/JARVISLoader';
+import OpenToWork from '@/components/OpenToWork';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -30,12 +31,12 @@ export default function App() {
   return (
     <>
       {loading && <JARVISLoader onComplete={handleLoaderComplete} />}
-      
+
       {/* Background Arc Reactor remains fully visible, lighting up first in the dark! */}
       <ArcReactorHero />
 
       {/* Holographic content and structural grids fade in around the reactor */}
-      <div 
+      <div
         className="relative min-h-screen antialiased selection:bg-primary-container/30 selection:text-primary overflow-x-hidden transition-opacity ease-in-out"
         style={{
           opacity: revealContent ? 1 : 0,
@@ -48,6 +49,17 @@ export default function App() {
 
         {/* Navigation */}
         <Navigation />
+
+        {/* Persistent "Open to Work" banner (dismissible) */}
+        <OpenToWork />
+
+        {/* Skip-to-content for accessibility */}
+        <a
+          href="#hero"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-primary focus:text-background focus:rounded focus:font-label focus:text-sm"
+        >
+          Skip to content
+        </a>
 
         {/* Main Content */}
         <main className="relative z-10">

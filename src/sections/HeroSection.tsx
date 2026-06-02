@@ -97,34 +97,49 @@ export default function HeroSection() {
         </div>
 
         <h2
-          className="font-label text-label-mono md:text-[18px] tracking-[0.2em] uppercase mb-12 sm:mb-20 md:mb-36 lg:mb-40 reveal-up text-[10px] sm:text-sm"
+          className="font-label text-label-mono md:text-[18px] tracking-[0.2em] uppercase mb-3 reveal-up text-[10px] sm:text-sm"
           style={{
             color: '#fbbf24',
             textShadow: '0 0 20px rgba(251, 191, 36, 0.3)',
             transitionDelay: '0.5s',
           }}
         >
-          AI-FIRST SOFTWARE ENGINEER & DATA ENGINEER
+          AI ENGINEER · LLM, RAG & DATA PIPELINES
         </h2>
 
+        {/* LinkedIn-readable 1-liner value prop */}
+        <p
+          className="font-body text-sm sm:text-base text-on-surface-variant max-w-2xl mb-10 sm:mb-14 reveal-up leading-relaxed"
+          style={{ transitionDelay: '0.55s' }}
+        >
+          I build <span className="text-on-surface font-semibold">production AI systems</span> — RAG pipelines, multi-agent workflows, and ML platforms.
+          <span className="text-on-surface-variant"> MSc Nottingham · currently @ Risidio (London) · open to AI engineer roles in the UK.</span>
+        </p>
+
         {/* Status Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12 glass-panel p-5 md:p-8 rounded-xl w-full max-w-3xl reveal-up border-t border-l border-white/10" style={{ transitionDelay: '0.7s' }}>
-          <div className="flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-glass-border pb-3 md:pb-0 md:pr-4">
-            <span className="font-label text-[12px] text-outline uppercase tracking-wider mb-2">Location</span>
-            <span className="font-terminal text-primary text-[16px]">LONDON, UK</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8 md:mb-10 glass-panel p-4 md:p-5 rounded-xl w-full max-w-4xl reveal-up border-t border-l border-white/10" style={{ transitionDelay: '0.7s' }}>
+          <div className="flex flex-col items-center text-center md:border-r border-glass-border md:pr-2">
+            <span className="font-label text-[10px] text-outline uppercase tracking-wider mb-1">Location</span>
+            <span className="font-terminal text-primary text-[14px] md:text-[15px]">LONDON, UK</span>
           </div>
-          <div className="flex flex-col items-center text-center border-b md:border-b-0 md:border-r border-glass-border pb-3 md:pb-0 md:px-4">
-            <span className="font-label text-[12px] text-outline uppercase tracking-wider mb-2">Focus</span>
-            <span className="font-terminal text-primary text-[16px]">AGENTIC AI / ML</span>
+          <div className="flex flex-col items-center text-center md:border-r border-glass-border md:pr-2">
+            <span className="font-label text-[10px] text-outline uppercase tracking-wider mb-1">Focus</span>
+            <span className="font-terminal text-primary text-[14px] md:text-[15px]">AGENTIC AI / ML</span>
           </div>
-          <div className="flex flex-col items-center text-center pt-3 md:pt-0 md:pl-4">
-            <span className="font-label text-[12px] text-outline uppercase tracking-wider mb-2">Experience</span>
-            <span className="font-terminal text-primary text-[16px]">3+ YEARS</span>
+          <div className="flex flex-col items-center text-center md:border-r border-glass-border md:pr-2">
+            <span className="font-label text-[10px] text-outline uppercase tracking-wider mb-1">Experience</span>
+            <span className="font-terminal text-primary text-[14px] md:text-[15px]">3+ YEARS</span>
+          </div>
+          <div className="flex flex-col items-center text-center">
+            <span className="font-label text-[10px] text-outline uppercase tracking-wider mb-1">Availability</span>
+            <span className="font-terminal text-neon-green text-[14px] md:text-[15px] flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> OPEN
+            </span>
           </div>
         </div>
 
         {/* Metrics */}
-        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 md:mb-24 reveal-up" style={{ transitionDelay: '0.85s' }}>
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 md:mb-10 reveal-up" style={{ transitionDelay: '0.85s' }}>
           {[
             { value: '96%', label: 'Model Accuracy', color: 'border-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(251,191,36,0.1)]' },
             { value: '1M+', label: 'Records Processed', color: 'border-secondary-container/20 hover:border-secondary-container/50 shadow-[0_0_15px_rgba(0,240,255,0.1)]' },
@@ -136,6 +151,24 @@ export default function HeroSection() {
               <span className="font-label text-[10px] text-on-surface-variant uppercase tracking-wider w-16 text-left leading-tight">{m.label}</span>
             </div>
           ))}
+        </div>
+
+        {/* Hero CTAs */}
+        <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-12 md:mb-20 reveal-up" style={{ transitionDelay: '0.95s' }}>
+          <a
+            href="#contact"
+            onClick={(e) => { e.preventDefault(); document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }); }}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-label-mono tracking-widest uppercase rounded transition-all hover:shadow-[0_0_25px_rgba(184,71,255,0.5)] hover:scale-[1.02]"
+          >
+            Get in Touch
+          </a>
+          <a
+            href="#projects"
+            onClick={(e) => { e.preventDefault(); document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }); }}
+            className="inline-flex items-center gap-2 px-6 py-3 border-2 border-primary-container/60 text-primary-container font-label text-label-mono tracking-widest uppercase rounded transition-all hover:bg-primary-container/10 hover:border-primary-container"
+          >
+            View 6 Live Projects
+          </a>
         </div>
       </div>
 
