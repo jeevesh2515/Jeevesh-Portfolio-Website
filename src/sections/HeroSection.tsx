@@ -54,7 +54,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-36 sm:pt-40 md:pt-44 lg:pt-52 pb-16 md:pb-0">
+    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-20 pb-20">
       {/* Floating Text — higher opacity for better visibility */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60 z-[1]">
         {FLOATING_WORDS.map((w, i) => (
@@ -172,13 +172,6 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-8 flex flex-col items-center z-30 reveal-up" style={{ transitionDelay: '1s' }}>
-        <span className="font-label text-[10px] text-outline tracking-widest uppercase mb-4">Scroll to Initialize</span>
-        <div className="w-px h-10 bg-gradient-to-b from-primary/50 to-transparent relative">
-          <div className="absolute top-0 left-[-2px] w-[5px] h-[5px] bg-primary rounded-full animate-scroll-down shadow-[0_0_8px_rgba(251,191,36,1)]" />
-        </div>
-      </div>
     </section>
   );
 }
