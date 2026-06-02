@@ -27,21 +27,21 @@ interface Project {
 const PROJECTS: Project[] = [
   {
     name: 'ExpertIQ Copilot',
-    tagline: 'AI Expert Discovery & Retrieval Platform',
+    tagline: 'Enterprise-Grade Expert Discovery & Research Intelligence',
     taglineColor: 'text-cyber-purple',
     description:
-      'A 3-layer AI retrieval system combining semantic vector search (sentence-transformers + ChromaDB), multi-hop knowledge graph traversal (NetworkX), and a 6-node LangGraph multi-agent workflow (Groq Llama 3.1 70B) for re-ranking, reasoning, and C-suite executive summary generation.',
+      'Production hybrid-retrieval platform: a 6-node LangGraph agent pipeline (Query Analyser → Vector Searcher → Graph Expander → Reranker → Summariser → Response Builder) over ChromaDB / Pinecone + NetworkX, fronted by a Next.js 16 / React 19 client with a 3D force-directed D3 knowledge graph.',
     problem:
-      'Traditional RAG pipelines return surface-level results and miss the expert connections that matter for strategic decisions.',
+      'Naive single-vector RAG misses multi-hop expert connections, hallucinates on constrained queries ("Fintech, 15+ yrs, available"), and lacks the observability needed for production enterprise use.',
     approach:
-      'Hybrid fusion scoring across vector similarity, graph centrality, and agent re-ranking — orchestrated via LangGraph.',
+      'Parent-child semantic chunking + Hypothetical Document Embeddings (HyDE) + self-querying metadata filters → vector + multi-hop graph retrieval → LLM-scored reranking → grounded summarisation. Wrapped in FastAPI, SQLAlchemy 2.0 with auto-migrations, Redis caching, LangSmith tracing, and 3 automated evaluators.',
     result:
-      'End-to-end LLM/RAG system with 6 specialised agents producing executive-grade synthesis from heterogeneous knowledge sources.',
-    techStack: ['Next.js 14', 'LangGraph', 'ChromaDB', 'NetworkX', 'Groq (Llama 3.1 70B)', 'FastAPI', 'Docker', 'GitHub Actions'],
+      'A 47-test-covered, Railway-deployed production system with a 3D expert graph UI. Demonstrates end-to-end LLM engineering: retrieval quality (HyDE + reranker), constraint precision, hallucination guards, and observability — not a demo, a shipped product.',
+    techStack: ['Next.js 16', 'React 19', 'FastAPI', 'LangGraph', 'ChromaDB', 'Pinecone', 'NetworkX', 'Redis', 'SQLAlchemy 2.0', 'Groq (Llama 3.1 70B)', 'LangSmith', 'D3.js 3D', 'Docker', 'Railway', 'Vercel'],
     stats: [
-      { label: 'RETRIEVAL LAYERS', value: '3' },
-      { label: 'AGENTS', value: '6' },
-      { label: 'SCORING', value: 'HYBRID' },
+      { label: 'AGENT NODES', value: '6' },
+      { label: 'AUTOMATED TESTS', value: '47' },
+      { label: 'EVALUATORS', value: '3' },
     ],
     link: 'https://github.com/jeevesh2515/expertiq-copilot',
     dateRange: 'APR — JUN 2026',
