@@ -54,7 +54,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-20 pb-20">
+    <section ref={sectionRef} id="hero" className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden px-margin-mobile md:px-margin-desktop pt-44 md:pt-48 pb-24 md:pb-28">
       {/* Floating Text — higher opacity for better visibility */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-60 z-[1]">
         {FLOATING_WORDS.map((w, i) => (
@@ -77,7 +77,7 @@ export default function HeroSection() {
 
         {/* Name — large, bright white, strong glow for maximum visibility */}
         <h1
-          className="font-display text-[clamp(26px,7.5vw,96px)] tracking-tighter leading-none mb-2 sm:mb-3 reveal-up whitespace-nowrap"
+          className="font-display text-[clamp(26px,7.5vw,96px)] tracking-tighter leading-none mb-4 sm:mb-6 reveal-up whitespace-nowrap"
           style={{
             color: '#ffffff',
             textShadow: '0 0 30px rgba(0, 212, 255, 0.5), 0 0 60px rgba(0, 212, 255, 0.25), 0 0 100px rgba(0, 212, 255, 0.15), 0 2px 4px rgba(0, 0, 0, 0.8)',
@@ -88,7 +88,7 @@ export default function HeroSection() {
         </h1>
 
         {/* Horizontal decorative line */}
-        <div className="flex items-center gap-3 mb-4 sm:mb-5 reveal-up" style={{ transitionDelay: '0.4s' }}>
+        <div className="flex items-center gap-3 mb-5 sm:mb-6 reveal-up" style={{ transitionDelay: '0.4s' }}>
           <div className="h-px w-10 md:w-16 bg-gradient-to-r from-transparent to-neon-cyan/40" />
           <div className="w-1.5 h-1.5 rotate-45 border border-neon-cyan/50" />
           <div className="h-px w-20 md:w-32 bg-gradient-to-r from-neon-cyan/40 via-primary/30 to-transparent" />
@@ -97,7 +97,7 @@ export default function HeroSection() {
         </div>
 
         <h2
-          className="font-label text-label-mono md:text-[18px] tracking-[0.2em] uppercase mb-3 reveal-up text-[10px] sm:text-sm"
+          className="font-label text-label-mono md:text-[18px] tracking-[0.2em] uppercase mb-5 sm:mb-6 reveal-up text-[10px] sm:text-sm"
           style={{
             color: '#fbbf24',
             textShadow: '0 0 20px rgba(251, 191, 36, 0.3)',
@@ -109,7 +109,7 @@ export default function HeroSection() {
 
         {/* LinkedIn-readable 1-liner value prop */}
         <p
-          className="font-body text-sm sm:text-base text-on-surface-variant max-w-2xl mb-10 sm:mb-14 reveal-up leading-relaxed"
+          className="font-body text-sm sm:text-base text-on-surface-variant max-w-2xl mb-12 sm:mb-16 reveal-up leading-relaxed"
           style={{ transitionDelay: '0.55s' }}
         >
           I build <span className="text-on-surface font-semibold">production AI systems</span> — RAG pipelines, multi-agent workflows, and ML platforms.
