@@ -26,6 +26,8 @@ const FLOATING_WORDS = [
   { text: 'Next.js', top: '74%', delay: '0s', duration: '37s', direction: 'right', color: 'text-green-float' },
   { text: 'Multi-Agent', top: '95%', delay: '3s', duration: '43s', direction: 'left', color: 'text-cyan-float' },
   { text: 'Vector Search', top: '78%', delay: '5s', duration: '46s', direction: 'right', color: 'text-amber-float' },
+  { text: 'Clinical AI', top: '58%', delay: '8s', duration: '52s', direction: 'left', color: 'text-cyan-float' },
+  { text: 'LangGraph', top: '29%', delay: '9s', duration: '38s', direction: 'right', color: 'text-green-float' },
 ];
 
 export default function HeroSection() {
@@ -141,9 +143,9 @@ export default function HeroSection() {
         {/* Metrics */}
         <div className="flex flex-wrap justify-center gap-3 sm:gap-4 mb-8 md:mb-10 reveal-up" style={{ transitionDelay: '0.85s' }}>
           {[
-            { value: '96%', label: 'Model Accuracy', color: 'border-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(251,191,36,0.1)]' },
+          { value: '96%', label: 'Model Accuracy', color: 'border-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(251,191,36,0.1)]' },
             { value: '1M+', label: 'Records Processed', color: 'border-secondary-container/20 hover:border-secondary-container/50 shadow-[0_0_15px_rgba(0,240,255,0.1)]' },
-            { value: '6', label: 'Agent Nodes', color: 'border-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(251,191,36,0.1)]' },
+            { value: '251', label: 'Tests Passing', color: 'border-primary/20 hover:border-primary/50 shadow-[0_0_15px_rgba(251,191,36,0.1)]' },
             { value: '£2.3M', label: 'Projected Savings', color: 'border-secondary-container/20 hover:border-secondary-container/50 shadow-[0_0_15px_rgba(0,240,255,0.1)]' },
           ].map((m, i) => (
             <div key={i} className={`glass-panel px-4 py-2.5 md:px-6 md:py-3 rounded-md flex items-center gap-3 border transition-colors ${m.color}`}>
@@ -167,7 +169,7 @@ export default function HeroSection() {
             onClick={(e) => { e.preventDefault(); document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }); }}
             className="inline-flex items-center gap-2 px-6 py-3 border-2 border-primary-container/60 text-primary-container font-label text-label-mono tracking-widest uppercase rounded transition-all hover:bg-primary-container/10 hover:border-primary-container"
           >
-            View 6 Live Projects
+            View 7 Live Projects
           </a>
         </div>
       </div>

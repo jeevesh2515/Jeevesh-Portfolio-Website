@@ -4,8 +4,8 @@ import { Mail, Linkedin, Github, FileText, MessageCircle, ArrowRight } from 'luc
 // ────────────────────────────────────────────────────────────
 // CONFIG — update these two values before deploying
 // ────────────────────────────────────────────────────────────
-const RESUME_URL = '/Jeevesh-Singale-Resume.pdf';           // Put PDF in /public/
-const RESUME_LAST_UPDATED = 'Jun 2026';
+const RESUME_URL = '/Jeevesh%20Singale%20Resume%20AI%20Engineer.pdf';  // Updated resume
+const RESUME_LAST_UPDATED = 'Jul 2026';
 // ────────────────────────────────────────────────────────────
 
 const PRIMARY_CTAS = [

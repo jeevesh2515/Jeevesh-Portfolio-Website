@@ -50,6 +50,31 @@ const PROJECTS: Project[] = [
     language: 'Python',
   },
   {
+    name: 'Clinical RAG Agent',
+    tagline: 'Production-Grade Agentic RAG for Hypertension Care',
+    taglineColor: 'text-secondary-container',
+    description:
+      'Evidence-based, zero-hallucination clinical workflow assistant combining hybrid Cohere dense + BM25 sparse retrieval, a 27-concept OKF knowledge spine, LangGraph stateful safety routing, deterministic medical calculators, and a full LangSmith evaluation suite — deployed at $0/month on Vercel.',
+    problem:
+      'Generic AI chatbots cannot safely operate in clinical environments: standard vector RAG suffers semantic noise, unconstrained LLMs hallucinate drug dosages, ignore contraindications, and can give hazardous emergency advice.',
+    approach:
+      'OKF Fast Path bypasses the "embedding lottery" for canonical facts → hybrid Cohere embed-v3 + BM25 retrieval with Cohere rerank-v3.5 → LangGraph DAG enforces safety routing (unsafe queries refused before any retrieval or LLM call) → deterministic eGFR / MAP / BMI calculators → LangSmith evaluators (Faithfulness, Relevancy, Harmfulness, Citation Accuracy, Refusal Correctness) across 55 golden test cases.',
+    result:
+      '251 passing tests · 27 curated OKF concept files across 8 clinical domains · Full citation provenance on every claim · $0/month deployment on Vercel · Offline keyless fallback with hash embeddings.',
+    techStack: ['Python 3.12', 'FastAPI', 'LangGraph', 'Cohere Embed v3', 'BM25', 'Cohere Rerank v3.5', 'LangSmith', 'React 18', 'TypeScript', 'Vite', 'Tailwind v4', 'Vercel'],
+    stats: [
+      { label: 'TESTS PASSING', value: '251' },
+      { label: 'OKF CONCEPTS', value: '27' },
+      { label: 'GOLDEN TEST CASES', value: '55' },
+    ],
+    link: 'https://github.com/jeevesh2515/clinical-rag-agent',
+    demo: 'https://clinical-workflows.vercel.app',
+    dateRange: 'JUN — JUL 2026',
+    status: 'SHIPPED',
+    featured: true,
+    language: 'Python',
+  },
+  {
     name: 'AI Job Agent',
     tagline: 'LLM-Powered Job Search Automation',
     taglineColor: 'text-primary-container',
@@ -179,7 +204,7 @@ export default function ProjectsSection() {
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-purple to-primary-container">PROJECTS</span>
           </h2>
           <p className="font-body text-body-md text-on-surface-variant mt-3 max-w-2xl mx-auto">
-            Production-deployed systems with real code, real data, and measurable outcomes. <a href="https://github.com/jeevesh2515?tab=repositories&sort=updated" target="_blank" rel="noopener noreferrer" className="text-primary-container hover:text-primary underline underline-offset-4">View all 18 repos on GitHub →</a>
+            Production-deployed systems with real code, real data, and measurable outcomes. <a href="https://github.com/jeevesh2515?tab=repositories&sort=updated" target="_blank" rel="noopener noreferrer" className="text-primary-container hover:text-primary underline underline-offset-4">View all 19 repos on GitHub →</a>
           </p>
         </div>
 
@@ -348,7 +373,7 @@ def run(input):
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 border border-primary-container/50 text-primary-container font-label text-label-mono tracking-widest uppercase rounded transition-all hover:bg-primary-container/10 hover:border-primary-container hover:shadow-[0_0_20px_rgba(184,71,255,0.3)]"
           >
-            <Github size={16} /> View all 18 repositories on GitHub <ExternalLink size={14} />
+            <Github size={16} /> View all 19 repositories on GitHub <ExternalLink size={14} />
           </a>
         </div>
       </div>
