@@ -603,32 +603,40 @@ export default function ProjectsSection() {
                   {/* Left Column: Project Details & Case Study */}
                   <div className="p-6 md:p-8 flex flex-col justify-between md:pl-10">
                     <div>
-                      {/* Clean Header: Title + Badges cleanly grouped together */}
-                      <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">
-                            {project.name}
-                          </h3>
-
+                      {/* Dedicated Project Meta Bar: Clear labels with 0% text blockage */}
+                      <div className="flex items-center justify-between flex-wrap gap-2 mb-3 pb-2.5 border-b border-glass-border/40">
+                        <div className="flex items-center gap-2 flex-wrap">
                           {project.featured && (
-                            <span className="font-label text-[10px] text-primary bg-primary/10 border border-primary/30 px-2.5 py-0.5 rounded-sm flex items-center gap-1 font-bold uppercase tracking-wider">
-                              <Star size={10} fill="currentColor" /> Flagship
+                            <span className="font-label text-[11px] text-amber-300 bg-gradient-to-r from-amber-500/20 via-purple-500/20 to-primary-container/20 border border-amber-400/50 px-3 py-0.5 rounded-sm flex items-center gap-1.5 font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(251,191,36,0.2)]">
+                              <Star size={11} className="text-amber-300" fill="currentColor" /> FLAGSHIP ARCHITECTURE
                             </span>
                           )}
 
                           {project.community && (
-                            <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2.5 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm font-semibold flex items-center gap-1">
-                              <Users size={10} /> Community
+                            <span className="font-label text-[11px] text-neon-green bg-neon-green/10 border border-neon-green/40 px-3 py-0.5 rounded-sm flex items-center gap-1.5 font-bold uppercase tracking-wider shadow-[0_0_12px_rgba(57,255,20,0.2)]">
+                              <Users size={11} className="text-neon-green" /> OPEN-SOURCE COMMUNITY
                             </span>
                           )}
+
+                          <span className="font-terminal text-[10px] text-outline uppercase tracking-wider px-2 py-0.5 border border-outline-variant/40 rounded-sm bg-surface/40">
+                            {project.language}
+                          </span>
                         </div>
 
-                        {project.status && (
-                          <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border shrink-0">
-                            <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
-                          </div>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {project.status && (
+                            <div className="font-label text-[11px] text-neon-green flex items-center gap-1.5 bg-neon-green/5 border-neon-green/30 px-2.5 py-0.5 rounded-sm border font-semibold">
+                              <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
+                            </div>
+                          )}
+                          <span className="font-terminal text-[11px] text-on-surface-variant hidden sm:inline">{project.dateRange}</span>
+                        </div>
                       </div>
+
+                      {/* Title Header */}
+                      <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide mb-2">
+                        {project.name}
+                      </h3>
 
                       <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2 text-xs md:text-sm`}>
                         <span className={`w-1 h-4 ${project.taglineColor.replace('text-', 'bg-')}`} /> {project.tagline}
@@ -702,9 +710,6 @@ export default function ProjectsSection() {
                         )}
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className="font-terminal text-[10px] text-outline uppercase tracking-wider px-2 py-0.5 border border-outline-variant/40 rounded-sm">
-                          {project.language}
-                        </span>
                         <span className="font-terminal text-xs text-on-surface-variant">{project.dateRange}</span>
                       </div>
                     </div>
