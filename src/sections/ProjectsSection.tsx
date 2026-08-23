@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useReveal } from '@/hooks/useReveal';
-import { ExternalLink, Github, Star, Terminal, Users, Sparkles, Play, CheckCircle2 } from 'lucide-react';
+import { ExternalLink, Github, Star, Terminal, Users, Sparkles, Play, CheckCircle2, Volume2 } from 'lucide-react';
 
 interface ProjectStat {
   label: string;
@@ -492,6 +492,54 @@ return await ffmpeg.render({ audio, srt, fps: 60 });`,
   },
 ];
 
+// Mini VoxFlow PCM Audio Waveform Component
+function MiniVoiceWaveform() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number;
+    let t = 0;
+
+    const draw = () => {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cy = h / 2;
+
+      ctx.clearRect(0, 0, w, h);
+      t += 0.05;
+
+      ctx.strokeStyle = '#00e5ff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+
+      for (let x = 0; x < w; x += 2) {
+        const y = cy + Math.sin(x * 0.08 + t * 4) * Math.cos(x * 0.03 + t * 2) * (h * 0.35);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+
+      animId = requestAnimationFrame(draw);
+    };
+
+    draw();
+    return () => cancelAnimationFrame(animId);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2 px-2 py-1 bg-black/60 rounded border border-neon-cyan/30 mt-2">
+      <Volume2 size={12} className="text-secondary-container animate-pulse shrink-0" />
+      <span className="font-terminal text-[9px] text-secondary-container">16kHz PCM AUDIO STREAM</span>
+      <canvas ref={canvasRef} width={90} height={16} className="ml-auto" />
+    </div>
+  );
+}
+
 export default function ProjectsSection() {
   const sectionRef = useReveal<HTMLElement>();
   const [activeSteps, setActiveSteps] = useState<Record<string, number>>({});
@@ -548,41 +596,40 @@ export default function ProjectsSection() {
                 }`}
                 style={{ transitionDelay: `${(i + 1) * 0.08}s` }}
               >
-                {/* Featured / Community badge */}
-                {project.featured && (
-                  <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
-                    <Star size={11} fill="currentColor" /> Flagship
-                  </div>
-                )}
-                {project.community && !project.featured && (
-                  <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-neon-green to-secondary-container text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
-                    <Users size={11} /> Community
-                  </div>
-                )}
-
                 {/* Scanning Line */}
                 <div className="scanning-line" />
 
                 <div className="grid md:grid-cols-[1fr_360px] gap-0 relative z-20">
-                  {/* Content */}
+                  {/* Left Column: Project Details & Case Study */}
                   <div className="p-6 md:p-8 flex flex-col justify-between md:pl-10">
                     <div>
-                      {/* Header */}
-                      <div className="flex justify-between items-start mb-3 flex-wrap gap-2 pr-20">
-                        <div className="flex items-center gap-3">
-                          <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">{project.name}</h3>
+                      {/* Clean Header: Title + Badges cleanly grouped together */}
+                      <div className="flex justify-between items-start mb-3 flex-wrap gap-2">
+                        <div className="flex items-center gap-2.5 flex-wrap">
+                          <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">
+                            {project.name}
+                          </h3>
+
+                          {project.featured && (
+                            <span className="font-label text-[10px] text-primary bg-primary/10 border border-primary/30 px-2.5 py-0.5 rounded-sm flex items-center gap-1 font-bold uppercase tracking-wider">
+                              <Star size={10} fill="currentColor" /> Flagship
+                            </span>
+                          )}
+
                           {project.community && (
-                            <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm">
-                              Open Source
+                            <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2.5 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm font-semibold flex items-center gap-1">
+                              <Users size={10} /> Community
                             </span>
                           )}
                         </div>
+
                         {project.status && (
-                          <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border">
+                          <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border shrink-0">
                             <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
                           </div>
                         )}
                       </div>
+
                       <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2 text-xs md:text-sm`}>
                         <span className={`w-1 h-4 ${project.taglineColor.replace('text-', 'bg-')}`} /> {project.tagline}
                       </h4>
@@ -663,20 +710,20 @@ export default function ProjectsSection() {
                     </div>
                   </div>
 
-                  {/* Right column: Interactive Runtime Execution Simulator */}
+                  {/* Right Column: Clean Interactive Runtime Execution Simulator */}
                   <div className="hidden md:flex bg-black/85 border-l border-surface-variant p-4 flex-col justify-between font-terminal text-[12px] text-on-surface-variant leading-relaxed">
                     <div>
-                      {/* Terminal Header */}
+                      {/* Terminal Header: Clean with no overlapping ribbons */}
                       <div className="flex items-center justify-between border-b border-surface-variant pb-2.5 mb-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 rounded-full bg-error/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-primary-container/80" />
-                          <span className="w-2.5 h-2.5 rounded-full bg-neon-green/80" />
-                          <span className="ml-2 text-surface-variant font-label text-[10px] uppercase tracking-widest">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="w-2.5 h-2.5 rounded-full bg-error/80 shrink-0" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-primary-container/80 shrink-0" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-neon-green/80 shrink-0" />
+                          <span className="ml-2 text-surface-variant font-label text-[10px] uppercase tracking-widest truncate">
                             {project.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.{project.language === 'Python' ? 'py' : 'ts'}
                           </span>
                         </div>
-                        <div className="font-terminal text-[10px] text-neon-green flex items-center gap-1">
+                        <div className="font-terminal text-[10px] text-neon-green flex items-center gap-1 shrink-0 ml-2">
                           <Play size={10} className="text-neon-green animate-pulse" /> RUNTIME
                         </div>
                       </div>
@@ -717,9 +764,12 @@ export default function ProjectsSection() {
                       </div>
 
                       {/* Syntax Code Preview */}
-                      <pre className="overflow-x-auto text-[11px] leading-relaxed text-gray-300 max-h-[170px] scrollbar-thin bg-black/60 p-2.5 rounded border border-white/5 font-mono">
+                      <pre className="overflow-x-auto text-[11px] leading-relaxed text-gray-300 max-h-[160px] scrollbar-thin bg-black/60 p-2.5 rounded border border-white/5 font-mono">
                         <code>{currentStep.code}</code>
                       </pre>
+
+                      {/* Special Embedded Waveform for VoxFlow Voice Agent */}
+                      {project.name.includes('VoxFlow') && <MiniVoiceWaveform />}
                     </div>
 
                     <div className="border-t border-surface-variant pt-3 space-y-1 mt-3">

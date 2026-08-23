@@ -14,8 +14,6 @@ import ArcReactorHero from '@/components/ArcReactorHero';
 import JARVISChatbot from '@/components/JARVISChatbot';
 import JARVISLoader from '@/components/JARVISLoader';
 import OpenToWork from '@/components/OpenToWork';
-import CyberneticScrollHUD from '@/components/CyberneticScrollHUD';
-import VoiceWaveformScrubber from '@/components/VoiceWaveformScrubber';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -32,7 +30,7 @@ export default function App() {
     <>
       {loading && <JARVISLoader onComplete={handleLoaderComplete} />}
 
-      {/* Background Arc Reactor with scroll velocity overdrive */}
+      {/* Background Arc Reactor */}
       <ArcReactorHero />
 
       {/* Holographic content and structural grids fade in around the reactor */}
@@ -47,10 +45,7 @@ export default function App() {
         <DataFluxBackground />
         <CircuitBoardBackground />
 
-        {/* Global Cybernetic Scroll HUD Telemetry Rail */}
-        <CyberneticScrollHUD />
-
-        {/* Navigation */}
+        {/* Navigation with top laser scroll progress bar */}
         <Navigation />
 
         {/* Persistent "Open to Work" banner (dismissible) */}
@@ -67,10 +62,6 @@ export default function App() {
         {/* Main Content */}
         <main className="relative z-10">
           <HeroSection />
-
-          {/* VoxFlow Scroll-Driven Audio PCM Spectrogram Scrubber */}
-          <VoiceWaveformScrubber />
-
           <AboutSection />
           <SkillsSection />
           <ExperienceSection />

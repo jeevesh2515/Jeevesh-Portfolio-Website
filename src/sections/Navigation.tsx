@@ -13,10 +13,18 @@ export default function Navigation() {
   const [activeSection, setActiveSection] = useState('');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = total > 0 ? (window.scrollY / total) * 100 : 0;
+      setScrollProgress(Math.min(100, Math.max(0, progress)));
+    };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -30,8 +38,7 @@ export default function Navigation() {
           activeSections.set(entry.target.id, entry.isIntersecting);
         });
 
-        // Find the last section in DOM order that is currently intersecting the detection zone
-        const currentActive = sections.reduce((active, id) => activeSections.get(id) ? id : active, '');
+        const currentActive = sections.reduce((active, id) => (activeSections.get(id) ? id : active), '');
         setActiveSection(currentActive);
       },
       {
@@ -54,13 +61,23 @@ export default function Navigation() {
   };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${
-      scrolled ? 'bg-background/90 backdrop-blur-xl border-b border-glass-border shadow-[0_0_15px_rgba(251,191,36,0.1)]' : 'bg-transparent'
-    }`}>
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 h-16 flex items-center transition-all duration-300 ${
+        scrolled
+          ? 'bg-background/90 backdrop-blur-xl border-b border-glass-border shadow-[0_0_15px_rgba(251,191,36,0.1)]'
+          : 'bg-transparent'
+      }`}
+    >
       <div className="w-full max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between">
         {/* Logo */}
-        <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-           className="font-display text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter hover:glow-gold transition-all">
+        <a
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className="font-display text-headline-lg-mobile md:text-headline-lg text-primary tracking-tighter hover:glow-gold transition-all"
+        >
           <span className="text-primary-container">&lt;</span>JS<span className="text-primary-container">/&gt;</span>
         </a>
 
@@ -69,10 +86,13 @@ export default function Navigation() {
           {NAV_LINKS.map((link) => {
             const isActive = activeSection === link.href.slice(1);
             return (
-              <button key={link.label} onClick={() => handleClick(link.href)}
-                className={`font-label text-label-mono transition-all duration-300 hover:text-primary hover:bg-glass-border px-3 py-1 rounded ${
-                  isActive ? 'text-primary border-b-2 border-primary pb-1' : 'text-on-surface-variant'
-                }`}>
+              <button
+                key={link.label}
+                onClick={() => handleClick(link.href)}
+                className={`font-label text-label-mono transition-all duration-300 hover:text-primary hover:bg-glass-border px-3 py-1 rounded cursor-pointer ${
+                  isActive ? 'text-primary border-b-2 border-primary pb-1 font-bold' : 'text-on-surface-variant'
+                }`}
+              >
                 {link.label}
               </button>
             );
@@ -83,12 +103,24 @@ export default function Navigation() {
         <div className="flex items-center gap-4">
           <div className="hidden md:flex items-center gap-2 font-label text-[12px]">
             <div className="w-2 h-2 rounded-full bg-neon-green animate-pulse led-indicator" />
-            <span className="text-on-surface-variant">SYSTEM ONLINE</span>
+            <span className="text-on-surface-variant font-mono">SYSTEM ONLINE</span>
           </div>
-          <button className="md:hidden text-primary" onClick={() => setMobileOpen(!mobileOpen)}>
+          <button
+            className="md:hidden text-primary p-2"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle navigation menu"
+          >
             {mobileOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
+      </div>
+
+      {/* Sleek Non-Intrusive Top Laser Scroll Progress Bar */}
+      <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-glass-border/30 overflow-hidden pointer-events-none">
+        <div
+          className="h-full bg-gradient-to-r from-primary-container via-cyber-purple to-neon-green transition-all duration-75 ease-out shadow-[0_0_8px_rgba(0,229,255,0.8)]"
+          style={{ width: `${scrollProgress}%` }}
+        />
       </div>
 
       {/* Mobile Menu */}
@@ -96,9 +128,12 @@ export default function Navigation() {
         <div className="fixed inset-0 top-16 z-40 bg-background/98 backdrop-blur-xl md:hidden">
           <div className="flex flex-col items-center justify-center h-full gap-8">
             {NAV_LINKS.map((link, i) => (
-              <button key={link.label} onClick={() => handleClick(link.href)}
-                className="font-display text-xl text-on-surface hover:text-primary transition-colors tracking-widest"
-                style={{ animationDelay: `${i * 100}ms` }}>
+              <button
+                key={link.label}
+                onClick={() => handleClick(link.href)}
+                className="font-display text-xl text-on-surface hover:text-primary transition-colors tracking-widest cursor-pointer"
+                style={{ animationDelay: `${i * 100}ms` }}
+              >
                 {link.label}
               </button>
             ))}
