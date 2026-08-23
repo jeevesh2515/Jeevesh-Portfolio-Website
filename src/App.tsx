@@ -14,6 +14,8 @@ import ArcReactorHero from '@/components/ArcReactorHero';
 import JARVISChatbot from '@/components/JARVISChatbot';
 import JARVISLoader from '@/components/JARVISLoader';
 import OpenToWork from '@/components/OpenToWork';
+import CyberneticScrollHUD from '@/components/CyberneticScrollHUD';
+import VoiceWaveformScrubber from '@/components/VoiceWaveformScrubber';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -21,8 +23,6 @@ export default function App() {
 
   const handleLoaderComplete = () => {
     setLoading(false);
-    // Wait 500ms so only the glowing Arc Reactor is visible in the dark first,
-    // then smoothly fade in all holographic HUD elements around it!
     setTimeout(() => {
       setRevealContent(true);
     }, 500);
@@ -32,7 +32,7 @@ export default function App() {
     <>
       {loading && <JARVISLoader onComplete={handleLoaderComplete} />}
 
-      {/* Background Arc Reactor remains fully visible, lighting up first in the dark! */}
+      {/* Background Arc Reactor with scroll velocity overdrive */}
       <ArcReactorHero />
 
       {/* Holographic content and structural grids fade in around the reactor */}
@@ -40,12 +40,15 @@ export default function App() {
         className="relative min-h-screen antialiased selection:bg-primary-container/30 selection:text-primary overflow-x-hidden transition-opacity ease-in-out"
         style={{
           opacity: revealContent ? 1 : 0,
-          transitionDuration: '1400ms'
+          transitionDuration: '1400ms',
         }}
       >
         {/* Background visual components */}
         <DataFluxBackground />
         <CircuitBoardBackground />
+
+        {/* Global Cybernetic Scroll HUD Telemetry Rail */}
+        <CyberneticScrollHUD />
 
         {/* Navigation */}
         <Navigation />
@@ -64,6 +67,10 @@ export default function App() {
         {/* Main Content */}
         <main className="relative z-10">
           <HeroSection />
+
+          {/* VoxFlow Scroll-Driven Audio PCM Spectrogram Scrubber */}
+          <VoiceWaveformScrubber />
+
           <AboutSection />
           <SkillsSection />
           <ExperienceSection />

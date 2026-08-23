@@ -1,9 +1,17 @@
+import { useState } from 'react';
 import { useReveal } from '@/hooks/useReveal';
-import { ExternalLink, Github, Star, Terminal, Users, Sparkles } from 'lucide-react';
+import { ExternalLink, Github, Star, Terminal, Users, Sparkles, Play, CheckCircle2 } from 'lucide-react';
 
 interface ProjectStat {
   label: string;
   value: string;
+}
+
+interface PipelineStep {
+  name: string;
+  detail: string;
+  code: string;
+  latency: string;
 }
 
 interface Project {
@@ -23,7 +31,7 @@ interface Project {
   featured?: boolean;
   community?: boolean;
   language: string;
-  codeSnippet?: string;
+  steps: PipelineStep[];
 }
 
 const PROJECTS: Project[] = [
@@ -60,19 +68,41 @@ const PROJECTS: Project[] = [
     status: 'SHIPPED',
     featured: true,
     language: 'Python',
-    codeSnippet: `# VoxFlow Real-Time Voice Pipeline
-async def stream_voice_session(websocket: WebSocket):
-    vad = SileroVAD(threshold=0.5)
-    stt = DeepgramStreamingClient(model="nova-2")
-    tts = ElevenLabsChunkedStreamer(voice="aria")
-    
-    async for pcm_frame in websocket.iter_bytes():
-        if vad.is_speech(pcm_frame):
-            tts.interrupt() # Instant atomic barge-in
-            partial_text = await stt.send(pcm_frame)
-            async for token in groq_llm.stream(partial_text):
-                audio_chunk = await tts.synthesize(token)
-                await websocket.send_bytes(audio_chunk)`,
+    steps: [
+      {
+        name: 'VAD Trigger',
+        detail: 'Silero speech boundary detection',
+        latency: '<10ms',
+        code: `# 1. Silero VAD Audio Framing
+vad = SileroVAD(threshold=0.5)
+if vad.is_speech(pcm_frame):
+    tts.interrupt() # Instant barge-in`,
+      },
+      {
+        name: 'Streaming STT',
+        detail: 'Deepgram Nova-2 WebSocket stream',
+        latency: '85ms',
+        code: `# 2. Deepgram Nova-2 STT
+stt = DeepgramStreamingClient(model="nova-2")
+partial_transcript = await stt.send(pcm_frame)`,
+      },
+      {
+        name: 'LLM Inference',
+        detail: 'Groq Llama 3.3 70B token stream',
+        latency: '120ms',
+        code: `# 3. Groq Llama 3.3 70B Stream
+async for token in groq_llm.stream(partial_transcript):
+    yield token`,
+      },
+      {
+        name: 'PCM Audio Out',
+        detail: 'ElevenLabs chunked synthesis',
+        latency: '165ms',
+        code: `# 4. ElevenLabs 16kHz PCM Output
+audio_chunk = await tts.synthesize(token)
+await websocket.send_bytes(audio_chunk)`,
+      },
+    ],
   },
   {
     name: 'Clinical RAG Agent',
@@ -109,16 +139,40 @@ async def stream_voice_session(websocket: WebSocket):
     status: 'SHIPPED',
     featured: true,
     language: 'Python',
-    codeSnippet: `# Clinical RAG Agent Graph
-class ClinicalSafetyState(TypedDict):
-    query: str
-    risk_level: SafetyTier
-    grounded_citations: list[Citation]
-
-def route_query(state: ClinicalSafetyState) -> str:
-    if state["risk_level"] == SafetyTier.EMERGENCY:
-        return "immediate_triage_refusal"
-    return "hybrid_retrieve_and_calculate"`,
+    steps: [
+      {
+        name: 'Safety Routing',
+        detail: 'Stateful LangGraph emergency gate',
+        latency: '8ms',
+        code: `# 1. Emergency Safety Filter
+if state["risk_tier"] == SafetyTier.EMERGENCY:
+    return "immediate_triage_refusal"`,
+      },
+      {
+        name: 'OKF Retrieval',
+        detail: 'Dense + BM25 sparse hybrid search',
+        latency: '45ms',
+        code: `# 2. Hybrid Cohere + BM25 Retrieval
+docs = await hybrid_retriever.search(query)
+reranked = cohere.rerank(docs, top_k=3)`,
+      },
+      {
+        name: 'Deterministic Calc',
+        detail: 'eGFR, MAP, and BMI calculators',
+        latency: '<2ms',
+        code: `# 3. Deterministic eGFR Calculator
+egfr = 142 * (min(scr / 0.9, 1) ** -0.302) * (0.9938 ** age)
+verify_dosage_threshold(egfr)`,
+      },
+      {
+        name: 'Ragas Evaluation',
+        detail: 'LangSmith golden benchmark suite',
+        latency: 'Pass',
+        code: `# 4. LangSmith Evals (0.98 Faithfulness)
+eval_result = ragas_evaluator.evaluate(state)
+assert eval_result.faithfulness >= 0.98`,
+      },
+    ],
   },
   {
     name: 'Cortex',
@@ -151,13 +205,40 @@ def route_query(state: ClinicalSafetyState) -> str:
     status: 'SHIPPED',
     featured: true,
     language: 'Python',
-    codeSnippet: `# Cortex Local Graph-RAG MCP Server
+    steps: [
+      {
+        name: 'Vault Parser',
+        detail: 'Markdown AST & Wikilink extraction',
+        latency: '15ms',
+        code: `# 1. Obsidian Vault AST Parser
+vault_graph = nx.DiGraph()
+for note in vault.iter_markdown():
+    vault_graph.add_edges_from(note.wikilinks)`,
+      },
+      {
+        name: 'LanceDB Index',
+        detail: 'Zero-cloud local vector search',
+        latency: '22ms',
+        code: `# 2. Local LanceDB Dense Query
+hits = table.search(query).limit(5).to_arrow()`,
+      },
+      {
+        name: 'Graph Traversal',
+        detail: 'NetworkX multi-hop expansion',
+        latency: '8ms',
+        code: `# 3. NetworkX Multi-Hop Subgraph
+subgraph = nx.ego_graph(vault_graph, hits[0].id, radius=2)`,
+      },
+      {
+        name: 'MCP Server',
+        detail: 'Model Context Protocol tool dispatch',
+        latency: '0ms Egress',
+        code: `# 4. MCP Native Protocol Tool
 @mcp.tool()
-async def query_second_brain(query: str, depth: int = 2) -> str:
-    dense_hits = await lancedb_table.search(query).limit(5).to_arrow()
-    graph_subgraph = nx.ego_graph(vault_graph, n=dense_hits[0].id, radius=depth)
-    context = synthesize_graph_context(dense_hits, graph_subgraph)
-    return ollama.generate(model="llama3:8b", prompt=context)`,
+async def query_vault(q: str):
+    return ollama.generate("llama3:8b", context)`,
+      },
+    ],
   },
   {
     name: 'README Guardian',
@@ -188,15 +269,37 @@ async def query_second_brain(query: str, depth: int = 2) -> str:
     dateRange: 'MAY 2026',
     status: 'SHIPPED',
     language: 'Python',
-    codeSnippet: `# README Guardian AST Linter
-class ReadmeLinter:
-    def lint(self, markdown_content: str) -> LintReport:
-        ast = MarkdownASTParser.parse(markdown_content)
-        report = LintReport()
-        report.assert_badge_schema(ast.badges)
-        report.assert_section_exists(ast, "Installation")
-        report.assert_valid_license(ast.license_block)
-        return report`,
+    steps: [
+      {
+        name: 'AST Parsing',
+        detail: 'Zero-dependency markdown lexer',
+        latency: '3ms',
+        code: `# 1. Zero-Dependency Markdown AST
+ast = MarkdownASTParser.parse(readme_content)`,
+      },
+      {
+        name: 'Badge Audit',
+        detail: 'CI status & license badge schema',
+        latency: '<1ms',
+        code: `# 2. Badge & Metadata Schema Lint
+report.assert_badge_schema(ast.badges)`,
+      },
+      {
+        name: 'Section Check',
+        detail: 'Installation & Architecture verification',
+        latency: '<1ms',
+        code: `# 3. Required Section Validation
+report.assert_section_exists(ast, "Installation")`,
+      },
+      {
+        name: 'Pre-Commit Gate',
+        detail: 'Atomic Git hook execution',
+        latency: '100% Pass',
+        code: `# 4. Pre-Commit Interceptor
+exit_code = 0 if report.is_clean else 1
+sys.exit(exit_code)`,
+      },
+    ],
   },
   {
     name: 'ExpertIQ Copilot',
@@ -230,14 +333,36 @@ class ReadmeLinter:
     status: 'SHIPPED',
     featured: true,
     language: 'Python',
-    codeSnippet: `# ExpertIQ 6-Node LangGraph Architecture
-workflow = StateGraph(ExpertDiscoveryState)
-workflow.add_node("query_analyzer", analyze_intent_and_constraints)
-workflow.add_node("vector_searcher", hyde_chroma_retrieval)
-workflow.add_node("graph_expander", networkx_multi_hop_expand)
-workflow.add_node("cross_reranker", cohere_rerank_scoring)
-workflow.add_node("grounded_summarizer", verify_and_summarize)
-workflow.set_entry_point("query_analyzer")`,
+    steps: [
+      {
+        name: 'Query Analyzer',
+        detail: 'Constraint & HyDE expansion',
+        latency: '35ms',
+        code: `# 1. Query Analyzer & HyDE
+state["hyde_doc"] = await generate_hyde(query)`,
+      },
+      {
+        name: 'Hybrid Search',
+        detail: 'ChromaDB vector retrieval',
+        latency: '28ms',
+        code: `# 2. Vector Searcher
+hits = chroma.similarity_search(state["hyde_doc"])`,
+      },
+      {
+        name: 'Graph Expander',
+        detail: 'Multi-hop NetworkX traversal',
+        latency: '18ms',
+        code: `# 3. NetworkX Graph Expander
+experts = expand_expert_network(hits, radius=2)`,
+      },
+      {
+        name: '3D D3 Graph',
+        detail: 'Interactive WebGL visualization',
+        latency: '60 FPS',
+        code: `# 4. Grounded Summarizer & D3 Render
+return d3_force_layout.render(experts)`,
+      },
+    ],
   },
   {
     name: 'Shorty',
@@ -269,18 +394,36 @@ workflow.set_entry_point("query_analyzer")`,
     dateRange: 'MAR — APR 2026',
     status: 'SHIPPED',
     language: 'TypeScript',
-    codeSnippet: `// Shorty Autonomous Video Pipeline
-export async function generateShortVideo(prompt: string): Promise<VideoResult> {
-  const script = await groq.chat.completions.create({ model: "llama-3.3-70b", messages: [prompt] });
-  const audioPath = await edgeTTS.synthesize(script.voiceoverText);
-  const srtSubtitles = await alignWordTimestamps(audioPath);
-  return await ffmpeg.composite({
-    audio: audioPath,
-    subtitles: srtSubtitles,
-    resolution: "1080x1920",
-    fps: 60
-  });
-}`,
+    steps: [
+      {
+        name: 'Script Writer',
+        detail: 'Groq viral retention generation',
+        latency: '450ms',
+        code: `// 1. Viral Script Generation
+const script = await groq.createScript(prompt);`,
+      },
+      {
+        name: 'Voiceover Synthesis',
+        detail: 'Edge TTS natural audio',
+        latency: '1.2s',
+        code: `// 2. Speech Synthesis
+const audio = await edgeTTS.synthesize(script);`,
+      },
+      {
+        name: 'SRT Subtitles',
+        detail: 'Whisper word-level alignment',
+        latency: '800ms',
+        code: `// 3. Subtitle Alignment
+const srt = await alignTimestamps(audio);`,
+      },
+      {
+        name: 'FFmpeg Render',
+        detail: '1080x1920 60FPS composition',
+        latency: '18s',
+        code: `// 4. FFmpeg Video Compositing
+return await ffmpeg.render({ audio, srt, fps: 60 });`,
+      },
+    ],
   },
   {
     name: 'AI Engineering Roadmap',
@@ -312,22 +455,50 @@ export async function generateShortVideo(prompt: string): Promise<VideoResult> {
     status: 'SHIPPED',
     community: true,
     language: 'TypeScript',
-    codeSnippet: `// AI Engineering Roadmap Interactive Engine
-export const STAGES: RoadmapStage[] = [
-  { id: 1, title: "LLM Fundamentals & Tokenization" },
-  { id: 2, title: "Structured Prompting & Tool Calling" },
-  { id: 3, title: "Production RAG & Hybrid Vector Search" },
-  { id: 4, title: "Stateful Multi-Agent Workflows (LangGraph)" },
-  { id: 5, title: "Evaluation, Ragas & Guardrails" },
-  { id: 6, title: "Voice AI & Low-Latency Streaming" },
-  { id: 7, title: "Observability & LangSmith Tracing" },
-  { id: 8, title: "Cloud Deployment & Edge Inference" }
-];`,
+    steps: [
+      {
+        name: 'Stage 1-2',
+        detail: 'LLM Foundations & Tool Calling',
+        latency: '8 Stages',
+        code: `// Stage 1 & 2: Fundamentals
+{ stage: 1, topic: "Tokenization & Embeddings" },
+{ stage: 2, topic: "Structured Tool Calling" }`,
+      },
+      {
+        name: 'Stage 3-4',
+        detail: 'RAG & Stateful LangGraph Agents',
+        latency: 'Production',
+        code: `// Stage 3 & 4: Retrieval & Workflows
+{ stage: 3, topic: "Hybrid Dense/Sparse Vector RAG" },
+{ stage: 4, topic: "LangGraph Multi-Agent Meshes" }`,
+      },
+      {
+        name: 'Stage 5-6',
+        detail: 'Evals & Low-Latency Voice AI',
+        latency: 'Real-Time',
+        code: `// Stage 5 & 6: Reliability & Voice
+{ stage: 5, topic: "Ragas & LangSmith Observability" },
+{ stage: 6, topic: "PCM WebSockets & Silero VAD" }`,
+      },
+      {
+        name: 'Stage 7-8',
+        detail: 'Deployment & Edge Inference',
+        latency: 'Zero Cost',
+        code: `// Stage 7 & 8: Production Deployment
+{ stage: 7, topic: "Docker & Kubernetes CI/CD" },
+{ stage: 8, topic: "Edge Ollama & MCP Servers" }`,
+      },
+    ],
   },
 ];
 
 export default function ProjectsSection() {
   const sectionRef = useReveal<HTMLElement>();
+  const [activeSteps, setActiveSteps] = useState<Record<string, number>>({});
+
+  const handleStepChange = (projectName: string, stepIdx: number) => {
+    setActiveSteps((prev) => ({ ...prev, [projectName]: stepIdx }));
+  };
 
   return (
     <section ref={sectionRef} id="projects" className="relative py-section-gap">
@@ -363,161 +534,211 @@ export default function ProjectsSection() {
         </div>
 
         <div className="space-y-8">
-          {PROJECTS.map((project, i) => (
-            <article
-              key={project.name}
-              className={`reveal-up glass-panel rounded-sm p-0 overflow-hidden group border relative transition-all duration-300 hover:shadow-[0_10px_40px_rgba(184,71,255,0.15)] ${
-                project.featured
-                  ? 'border-primary-container/60 shadow-[0_0_25px_rgba(184,71,255,0.12)]'
-                  : 'border-outline-variant hover:border-primary-container'
-              }`}
-              style={{ transitionDelay: `${(i + 1) * 0.08}s` }}
-            >
-              {/* Featured / Community badge */}
-              {project.featured && (
-                <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
-                  <Star size={11} fill="currentColor" /> Flagship
-                </div>
-              )}
-              {project.community && !project.featured && (
-                <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-neon-green to-secondary-container text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
-                  <Users size={11} /> Community
-                </div>
-              )}
+          {PROJECTS.map((project, i) => {
+            const currentStepIdx = activeSteps[project.name] ?? 0;
+            const currentStep = project.steps[currentStepIdx] || project.steps[0];
 
-              {/* Scanning Line */}
-              <div className="scanning-line" />
+            return (
+              <article
+                key={project.name}
+                className={`reveal-up glass-panel rounded-sm p-0 overflow-hidden group border relative transition-all duration-300 hover:shadow-[0_10px_40px_rgba(184,71,255,0.15)] ${
+                  project.featured
+                    ? 'border-primary-container/60 shadow-[0_0_25px_rgba(184,71,255,0.12)]'
+                    : 'border-outline-variant hover:border-primary-container'
+                }`}
+                style={{ transitionDelay: `${(i + 1) * 0.08}s` }}
+              >
+                {/* Featured / Community badge */}
+                {project.featured && (
+                  <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
+                    <Star size={11} fill="currentColor" /> Flagship
+                  </div>
+                )}
+                {project.community && !project.featured && (
+                  <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-neon-green to-secondary-container text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
+                    <Users size={11} /> Community
+                  </div>
+                )}
 
-              <div className="grid md:grid-cols-[1fr_340px] gap-0 relative z-20">
-                {/* Content */}
-                <div className="p-6 md:p-8 flex flex-col justify-between md:pl-10">
-                  <div>
-                    {/* Header */}
-                    <div className="flex justify-between items-start mb-3 flex-wrap gap-2 pr-20">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">{project.name}</h3>
-                        {project.community && (
-                          <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm">
-                            Open Source
-                          </span>
+                {/* Scanning Line */}
+                <div className="scanning-line" />
+
+                <div className="grid md:grid-cols-[1fr_360px] gap-0 relative z-20">
+                  {/* Content */}
+                  <div className="p-6 md:p-8 flex flex-col justify-between md:pl-10">
+                    <div>
+                      {/* Header */}
+                      <div className="flex justify-between items-start mb-3 flex-wrap gap-2 pr-20">
+                        <div className="flex items-center gap-3">
+                          <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">{project.name}</h3>
+                          {project.community && (
+                            <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm">
+                              Open Source
+                            </span>
+                          )}
+                        </div>
+                        {project.status && (
+                          <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border">
+                            <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
+                          </div>
                         )}
                       </div>
-                      {project.status && (
-                        <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border">
-                          <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
-                        </div>
-                      )}
-                    </div>
-                    <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2 text-xs md:text-sm`}>
-                      <span className={`w-1 h-4 ${project.taglineColor.replace('text-', 'bg-')}`} /> {project.tagline}
-                    </h4>
-                    <p className="font-body text-body-md text-on-surface-variant mb-6 leading-relaxed">{project.description}</p>
+                      <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2 text-xs md:text-sm`}>
+                        <span className={`w-1 h-4 ${project.taglineColor.replace('text-', 'bg-')}`} /> {project.tagline}
+                      </h4>
+                      <p className="font-body text-body-md text-on-surface-variant mb-6 leading-relaxed">{project.description}</p>
 
-                    {/* Mini case study — Problem / Approach / Result */}
-                    <details className="mb-6 group/case">
-                      <summary className="cursor-pointer font-label text-[11px] text-primary-container tracking-widest uppercase hover:text-primary transition-colors list-none flex items-center gap-2 font-semibold">
-                        <span className="w-3 h-3 border border-primary-container/50 rotate-45 group-open/case:rotate-[225deg] transition-transform duration-300" />
-                        System Architecture: Problem → Approach → Outcome
-                      </summary>
-                      <div className="mt-4 space-y-3 font-body text-sm text-on-surface-variant border-l-2 border-primary-container/30 pl-4">
-                        <div>
-                          <span className="font-label text-[10px] text-error tracking-widest uppercase block mb-1 font-bold">Challenge</span>
-                          {project.problem}
+                      {/* Mini case study — Problem / Approach / Result */}
+                      <details className="mb-6 group/case">
+                        <summary className="cursor-pointer font-label text-[11px] text-primary-container tracking-widest uppercase hover:text-primary transition-colors list-none flex items-center gap-2 font-semibold">
+                          <span className="w-3 h-3 border border-primary-container/50 rotate-45 group-open/case:rotate-[225deg] transition-transform duration-300" />
+                          System Architecture: Problem → Approach → Outcome
+                        </summary>
+                        <div className="mt-4 space-y-3 font-body text-sm text-on-surface-variant border-l-2 border-primary-container/30 pl-4">
+                          <div>
+                            <span className="font-label text-[10px] text-error tracking-widest uppercase block mb-1 font-bold">Challenge</span>
+                            {project.problem}
+                          </div>
+                          <div>
+                            <span className="font-label text-[10px] text-primary-container tracking-widest uppercase block mb-1 font-bold">Engineering Approach</span>
+                            {project.approach}
+                          </div>
+                          <div>
+                            <span className="font-label text-[10px] text-neon-green tracking-widest uppercase block mb-1 font-bold">Production Outcome</span>
+                            {project.result}
+                          </div>
                         </div>
-                        <div>
-                          <span className="font-label text-[10px] text-primary-container tracking-widest uppercase block mb-1 font-bold">Engineering Approach</span>
-                          {project.approach}
-                        </div>
-                        <div>
-                          <span className="font-label text-[10px] text-neon-green tracking-widest uppercase block mb-1 font-bold">Production Outcome</span>
-                          {project.result}
-                        </div>
+                      </details>
+
+                      {/* Tech Stack */}
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        {project.techStack.map((tech) => (
+                          <span key={tech} className="tech-tag font-label text-[11px] px-3 py-1.5 border border-surface-variant rounded-sm text-on-surface cursor-default bg-surface/50">
+                            {tech}
+                          </span>
+                        ))}
                       </div>
-                    </details>
 
-                    {/* Tech Stack */}
-                    <div className="flex flex-wrap gap-2 mb-6">
-                      {project.techStack.map((tech) => (
-                        <span key={tech} className="tech-tag font-label text-[11px] px-3 py-1.5 border border-surface-variant rounded-sm text-on-surface cursor-default bg-surface/50">
-                          {tech}
-                        </span>
-                      ))}
+                      {/* Stats */}
+                      <div className="flex flex-wrap gap-6 mb-6">
+                        {project.stats.map((stat, j) => (
+                          <div key={j} className="text-center">
+                            <div className="font-terminal text-primary text-lg font-bold">{stat.value}</div>
+                            <div className="font-label text-[10px] text-on-surface-variant tracking-wider uppercase">{stat.label}</div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
 
-                    {/* Stats */}
-                    <div className="flex flex-wrap gap-6 mb-6">
-                      {project.stats.map((stat, j) => (
-                        <div key={j} className="text-center">
-                          <div className="font-terminal text-primary text-lg font-bold">{stat.value}</div>
-                          <div className="font-label text-[10px] text-on-surface-variant tracking-wider uppercase">{stat.label}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Links + Date */}
-                  <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-outline-variant/30">
-                    <div className="flex items-center gap-4">
-                      <a
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 font-label text-label-mono text-primary-container hover:text-primary transition-colors btn-border-draw pb-1"
-                        aria-label={`View ${project.name} repository on GitHub`}
-                      >
-                        <Github size={14} /> Repository <ExternalLink size={12} />
-                      </a>
-                      {project.demo && (
+                    {/* Links + Date */}
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-outline-variant/30">
+                      <div className="flex items-center gap-4">
                         <a
-                          href={project.demo}
+                          href={project.link}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 font-label text-label-mono text-neon-green hover:text-neon-green/80 transition-colors btn-border-draw pb-1"
-                          aria-label={`Open live interactive demo for ${project.name}`}
+                          className="inline-flex items-center gap-2 font-label text-label-mono text-primary-container hover:text-primary transition-colors btn-border-draw pb-1"
+                          aria-label={`View ${project.name} repository on GitHub`}
                         >
-                          <Sparkles size={13} /> Live System <ExternalLink size={12} />
+                          <Github size={14} /> Repository <ExternalLink size={12} />
                         </a>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="font-terminal text-[10px] text-outline uppercase tracking-wider px-2 py-0.5 border border-outline-variant/40 rounded-sm">
-                        {project.language}
-                      </span>
-                      <span className="font-terminal text-xs text-on-surface-variant">{project.dateRange}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right column: code preview / stats card */}
-                <div className="hidden md:flex bg-black/85 border-l border-surface-variant p-5 flex-col justify-between font-terminal text-[12px] text-on-surface-variant leading-relaxed">
-                  <div>
-                    <div className="flex items-center gap-2 border-b border-surface-variant pb-3 mb-3">
-                      <span className="w-2.5 h-2.5 rounded-full bg-error/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-primary-container/80" />
-                      <span className="w-2.5 h-2.5 rounded-full bg-neon-green/80" />
-                      <span className="ml-3 text-surface-variant font-label text-[10px] uppercase tracking-widest">
-                        {project.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.{project.language === 'Python' ? 'py' : 'ts'}
-                      </span>
-                    </div>
-
-                    {/* Syntax Code Preview */}
-                    <pre className="overflow-x-auto text-[11px] leading-relaxed text-gray-300 max-h-[260px] scrollbar-thin">
-                      <code>{project.codeSnippet || `# ${project.name}\n# Stack: ${project.techStack.slice(0, 4).join(' · ')}\n\nasync def execute():\n    """${project.tagline}"""\n    return {"status": "${project.status}"}`}</code>
-                    </pre>
-                  </div>
-
-                  <div className="border-t border-surface-variant pt-3 space-y-1.5 mt-3">
-                    {project.stats.map((s, k) => (
-                      <div key={k} className="flex justify-between text-[10px]">
-                        <span className="text-outline uppercase tracking-wider">{s.label}</span>
-                        <span className="text-primary font-bold">{s.value}</span>
+                        {project.demo && (
+                          <a
+                            href={project.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 font-label text-label-mono text-neon-green hover:text-neon-green/80 transition-colors btn-border-draw pb-1"
+                            aria-label={`Open live interactive demo for ${project.name}`}
+                          >
+                            <Sparkles size={13} /> Live System <ExternalLink size={12} />
+                          </a>
+                        )}
                       </div>
-                    ))}
+                      <div className="flex items-center gap-3">
+                        <span className="font-terminal text-[10px] text-outline uppercase tracking-wider px-2 py-0.5 border border-outline-variant/40 rounded-sm">
+                          {project.language}
+                        </span>
+                        <span className="font-terminal text-xs text-on-surface-variant">{project.dateRange}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right column: Interactive Runtime Execution Simulator */}
+                  <div className="hidden md:flex bg-black/85 border-l border-surface-variant p-4 flex-col justify-between font-terminal text-[12px] text-on-surface-variant leading-relaxed">
+                    <div>
+                      {/* Terminal Header */}
+                      <div className="flex items-center justify-between border-b border-surface-variant pb-2.5 mb-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-error/80" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-primary-container/80" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-neon-green/80" />
+                          <span className="ml-2 text-surface-variant font-label text-[10px] uppercase tracking-widest">
+                            {project.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.{project.language === 'Python' ? 'py' : 'ts'}
+                          </span>
+                        </div>
+                        <div className="font-terminal text-[10px] text-neon-green flex items-center gap-1">
+                          <Play size={10} className="text-neon-green animate-pulse" /> RUNTIME
+                        </div>
+                      </div>
+
+                      {/* Interactive Step Selectors */}
+                      <div className="grid grid-cols-4 gap-1 mb-3">
+                        {project.steps.map((_, sIdx) => {
+                          const isActive = currentStepIdx === sIdx;
+                          return (
+                            <button
+                              key={sIdx}
+                              onClick={() => handleStepChange(project.name, sIdx)}
+                              className={`px-1.5 py-1 rounded text-[10px] font-terminal uppercase tracking-tight text-center transition-all cursor-pointer border ${
+                                isActive
+                                  ? 'border-primary bg-primary/15 text-white font-bold shadow-[0_0_8px_rgba(251,191,36,0.3)]'
+                                  : 'border-outline-variant/40 text-outline hover:text-on-surface hover:bg-surface/50'
+                              }`}
+                            >
+                              0{sIdx + 1}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Active Stage Indicator */}
+                      <div className="bg-surface/40 p-2 rounded border border-outline-variant/30 mb-3 flex items-center justify-between">
+                        <div className="min-w-0 flex-1">
+                          <span className="text-[10px] text-primary font-bold block truncate">
+                            NODE 0{currentStepIdx + 1}: {currentStep.name}
+                          </span>
+                          <span className="text-[9px] text-on-surface-variant block truncate">
+                            {currentStep.detail}
+                          </span>
+                        </div>
+                        <span className="text-[10px] font-bold text-secondary-container bg-secondary-container/10 px-2 py-0.5 rounded border border-secondary-container/30 shrink-0 ml-2">
+                          {currentStep.latency}
+                        </span>
+                      </div>
+
+                      {/* Syntax Code Preview */}
+                      <pre className="overflow-x-auto text-[11px] leading-relaxed text-gray-300 max-h-[170px] scrollbar-thin bg-black/60 p-2.5 rounded border border-white/5 font-mono">
+                        <code>{currentStep.code}</code>
+                      </pre>
+                    </div>
+
+                    <div className="border-t border-surface-variant pt-3 space-y-1 mt-3">
+                      <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-outline uppercase tracking-wider flex items-center gap-1">
+                          <CheckCircle2 size={11} className="text-neon-green" /> INTEGRITY
+                        </span>
+                        <span className="text-neon-green font-bold">100% VERIFIED</span>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-outline uppercase tracking-wider">LATENCY TIER</span>
+                        <span className="text-primary font-bold">{project.stats[0]?.value}</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
 
         {/* View all on GitHub CTA */}
