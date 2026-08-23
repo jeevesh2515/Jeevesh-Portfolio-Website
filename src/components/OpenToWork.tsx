@@ -54,7 +54,7 @@ export default function OpenToWork() {
           <p className="font-terminal text-[11px] sm:text-xs text-on-surface truncate">
             <span className="text-neon-green font-bold">OPEN TO WORK</span>
             <span className="text-on-surface-variant hidden sm:inline"> · </span>
-            <span className="text-on-surface-variant">AI Engineer roles · London / Remote UK</span>
+            <span className="text-on-surface-variant">Senior AI Systems & Agentic roles · London / Remote UK</span>
           </p>
         </div>
         <div className="flex items-center gap-2 shrink-0">

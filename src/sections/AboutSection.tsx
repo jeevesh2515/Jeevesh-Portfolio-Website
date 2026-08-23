@@ -1,27 +1,31 @@
 import { useState, useEffect, useRef } from 'react';
 import { useReveal } from '@/hooks/useReveal';
 import NeuralNetworkHologram from '@/components/NeuralNetworkHologram';
+import { Github, Linkedin, ExternalLink } from 'lucide-react';
 
 const HIGHLIGHT_TERMS: Record<string, string> = {
-  '96% accuracy': 'text-secondary-container',
-  '1M+ record datasets': 'text-secondary-container',
-  'LLM/RAG engineering': 'text-secondary-container',
-  'semantic vector search': 'text-secondary-container',
-  'knowledge graph traversal': 'text-cyber-purple',
-  '6-node LangGraph': 'text-neon-green',
-  'MSc Information Systems': 'text-primary',
+  'Senior AI Systems Engineer & Open-Source Architect': 'text-primary font-bold',
+  'stateful agentic workflows': 'text-secondary-container font-semibold',
+  'sub-second streaming voice AI': 'text-neon-green font-semibold',
+  'hybrid Graph-RAG': 'text-cyber-purple font-semibold',
+  'deterministic safety evaluation': 'text-primary font-semibold',
+  '<380ms glass-to-glass': 'text-secondary-container font-bold',
+  '0.98 Faithfulness': 'text-neon-green font-bold',
+  '258 passing tests': 'text-secondary-container font-bold',
+  'VoxFlow Voice Agent': 'text-secondary-container',
+  'Clinical RAG Agent': 'text-primary',
+  'Cortex': 'text-cyber-purple',
   'ExpertIQ Copilot': 'text-primary',
-  'Web3 revenue distribution': 'text-primary',
-  '96%': 'text-secondary-container font-bold',
-  '1M+': 'text-secondary-container font-bold',
-  'multi-party royalty': 'text-primary',
+  'Model Context Protocol (MCP)': 'text-secondary-container',
+  'MSc Information Systems': 'text-primary',
+  'LangGraph': 'text-secondary-container',
 };
 
 const SPECIALIZATIONS = [
-  { label: 'LLM & RAG SYSTEMS', color: 'border-secondary-container/30 text-secondary-container' },
-  { label: 'DATA ENGINEERING', color: 'border-error/30 text-error' },
-  { label: 'MLOps & CI/CD', color: 'border-cyber-purple/30 text-cyber-purple' },
-  { label: 'FULL-STACK AI', color: 'border-neon-green/30 text-neon-green' },
+  { label: 'STATEFUL AGENTS (LANGGRAPH)', color: 'border-secondary-container/30 text-secondary-container' },
+  { label: 'STREAMING VOICE AI (<380ms)', color: 'border-neon-green/30 text-neon-green' },
+  { label: 'HYBRID RAG & GRAPH-RAG (MCP)', color: 'border-cyber-purple/30 text-cyber-purple' },
+  { label: 'SAFETY EVALS & GUARDRAILS (RAGAS)', color: 'border-primary/30 text-primary' },
 ];
 
 function HighlightText({ text }: { text: string }) {
@@ -63,7 +67,7 @@ export default function AboutSection() {
   const scrollRef = useRef<HTMLElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
 
-  // Scroll progress calculation — same proven pattern as SkillsSection
+  // Scroll progress calculation
   useEffect(() => {
     const handleScroll = () => {
       const section = scrollRef.current;
@@ -72,8 +76,6 @@ export default function AboutSection() {
       const rect = section.getBoundingClientRect();
       const vh = window.innerHeight;
 
-      // Progress starts when top of section reaches 80% of viewport,
-      // completes when top reaches -20% (section scrolled well past)
       const start = vh * 0.80;
       const end = vh * -0.20;
       const total = start - end;
@@ -88,13 +90,16 @@ export default function AboutSection() {
   }, []);
 
   return (
-    <section ref={(el) => {
-      // Share ref between useReveal and scroll tracking
-      if (el) {
-        (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
-        (scrollRef as React.MutableRefObject<HTMLElement | null>).current = el;
-      }
-    }} id="about" className="relative py-section-gap">
+    <section
+      ref={(el) => {
+        if (el) {
+          (sectionRef as React.MutableRefObject<HTMLElement | null>).current = el;
+          (scrollRef as React.MutableRefObject<HTMLElement | null>).current = el;
+        }
+      }}
+      id="about"
+      className="relative py-section-gap"
+    >
       <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop">
         {/* Section Label */}
         <div className="flex items-center gap-4 mb-12 reveal-up">
@@ -102,11 +107,11 @@ export default function AboutSection() {
             <div className="w-2 h-2 rounded-full bg-primary led-indicator shadow-[0_0_8px_rgba(251,191,36,0.8)]" />
             <div className="w-12 h-px bg-glass-border" />
           </div>
-          <span className="font-terminal text-label-mono text-on-surface-variant tracking-widest uppercase">// 01 &mdash; SYSTEM OVERVIEW</span>
+          <span className="font-terminal text-label-mono text-on-surface-variant tracking-widest uppercase">// 01 &mdash; SYSTEM ARCHITECTURE PROFILE</span>
         </div>
 
         <div className="grid lg:grid-cols-5 gap-12 items-start">
-          {/* Left: Neural Network Hologram (Fully visible and responsive across all screens) */}
+          {/* Left: Neural Network Hologram */}
           <div className="lg:col-span-2 flex justify-center items-center mb-10 lg:mb-0 lg:block">
             <div className="sticky top-24 md:top-32 reveal-scale w-full max-w-[320px] xs:max-w-[360px] md:max-w-[400px] aspect-square">
               <NeuralNetworkHologram scrollProgress={scrollProgress} />
@@ -116,28 +121,51 @@ export default function AboutSection() {
           {/* Right: Content */}
           <div className="lg:col-span-3">
             <h2 className="reveal-up font-display text-headline-lg-mobile lg:text-headline-lg text-on-surface mb-6">
-              ARCHITECTING INTELLIGENT SYSTEMS
+              ARCHITECTING PRODUCTION AI SYSTEMS
             </h2>
 
-            <div className="reveal-up module-housing rounded-xl p-6 lg:p-8 relative overflow-hidden group"
-              style={{ transitionDelay: '0.15s' }}>
+            <div
+              className="reveal-up module-housing rounded-xl p-6 lg:p-8 relative overflow-hidden group"
+              style={{ transitionDelay: '0.15s' }}
+            >
               <div className="heatsink-pattern absolute inset-0 opacity-20 pointer-events-none" />
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary/0 via-primary to-primary/0 opacity-50" />
               <div className="flex justify-between items-start border-b border-glass-border pb-4 mb-6">
-                <h3 className="font-display text-headline-lg-mobile text-primary uppercase">System Profile</h3>
+                <h3 className="font-display text-headline-lg-mobile text-primary uppercase">Engineering Profile</h3>
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse led-indicator" />
               </div>
               <div className="font-body text-body-md text-on-surface-variant leading-relaxed space-y-4 relative z-10">
                 <p>
-                  <HighlightText text="AI Engineer and Data Engineer with 3+ years of experience building and shipping ML pipelines, data platforms, and AI-powered systems. Delivered production-grade ML models achieving 96% accuracy on 1M+ record datasets." />
+                  <HighlightText text="Senior AI Systems Engineer & Open-Source Architect with 3+ years of experience designing and shipping production-grade LLM pipelines, real-time agentic workflows, and distributed data systems. Specializing in stateful agentic workflows (LangGraph) and sub-second streaming voice AI with <380ms glass-to-glass latency." />
                 </p>
                 <p>
-                  <HighlightText text="Built Web3 revenue distribution systems and AI-powered learning platforms at an active London AI startup. Flagship personal project — ExpertIQ Copilot — demonstrates end-to-end LLM/RAG engineering: semantic vector search, knowledge graph traversal, and 6-node LangGraph multi-agent orchestration." />
+                  <HighlightText text="Creator of open-source flagship architectures: VoxFlow Voice Agent (bi-directional PCM streaming with instant barge-in), Clinical RAG Agent (evidence-based hypertension care achieving 0.98 Faithfulness across 258 passing tests), Cortex (local-first LanceDB + NetworkX Graph-RAG Model Context Protocol (MCP) server), and ExpertIQ Copilot (6-node multi-agent research intelligence)." />
                 </p>
                 <p>
-                  <HighlightText text="MSc Information Systems, University of Nottingham. Databricks Generative AI certified." />
+                  <HighlightText text="MSc Information Systems, University of Nottingham. Currently engineering production AI platforms and Web3 systems at Risidio (London). Committed to deterministic safety evaluation, zero-hallucination grounding, and sub-second response architectures." />
                 </p>
               </div>
+
+              {/* Profile Quick Links */}
+              <div className="flex flex-wrap items-center gap-4 pt-4 mt-6 border-t border-glass-border/60 relative z-10">
+                <a
+                  href="https://github.com/jeevesh2515"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-label text-label-mono text-primary-container hover:text-primary transition-colors text-xs"
+                >
+                  <Github size={14} /> github.com/jeevesh2515 <ExternalLink size={11} />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/jeevesh-singale07/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 font-label text-label-mono text-secondary-container hover:text-secondary transition-colors text-xs"
+                >
+                  <Linkedin size={14} /> linkedin.com/in/jeevesh-singale07 <ExternalLink size={11} />
+                </a>
+              </div>
+
               {/* Corner Decorations */}
               <div className="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-primary/50 transition-all duration-300 group-hover:border-primary" />
               <div className="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-primary/50 transition-all duration-300 group-hover:border-primary" />
@@ -148,7 +176,10 @@ export default function AboutSection() {
             {/* Specializations */}
             <div className="flex flex-wrap gap-3 mt-6 reveal-up" style={{ transitionDelay: '0.3s' }}>
               {SPECIALIZATIONS.map((spec, i) => (
-                <div key={i} className={`px-4 py-2 border ${spec.color} rounded-md font-label text-xs tracking-widest uppercase bg-surface-container/50`}>
+                <div
+                  key={i}
+                  className={`px-4 py-2 border ${spec.color} rounded-md font-label text-xs tracking-widest uppercase bg-surface-container/50 font-semibold`}
+                >
                   {spec.label}
                 </div>
               ))}
@@ -158,7 +189,7 @@ export default function AboutSection() {
             <div className="flex items-center gap-3 mt-8 reveal-up" style={{ transitionDelay: '0.45s' }}>
               <div className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse led-indicator" />
               <p className="font-terminal text-sm text-on-surface-variant">
-                Focus Area: Designing production-grade LLM agents, scalable RAG architectures, and real-time distributed data pipelines.
+                Core Focus: Real-time low-latency voice pipelines, multi-agent LangGraph orchestration, hybrid vector + knowledge graph retrieval (MCP), and automated Ragas evaluation suites.
               </p>
             </div>
           </div>

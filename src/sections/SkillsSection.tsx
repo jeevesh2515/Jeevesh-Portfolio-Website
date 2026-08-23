@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Brain, BarChart3, Database, Cloud, Globe, PieChart } from 'lucide-react';
+import { Brain, Database, Mic, Server, Globe, ShieldCheck } from 'lucide-react';
 
 interface Point {
   x: number;
@@ -7,12 +7,128 @@ interface Point {
 }
 
 const CLUSTERS = [
-  { id: 'llm-rag', title: 'LLM & RAG', subtitle: 'Language Models & Retrieval', color: 'border-secondary-container/40 shadow-[0_0_15px_rgba(0,240,255,0.1)]', dot: 'bg-secondary-container', icon: <Brain size={18} />, startProgress: 0.05, endProgress: 0.30, skills: ['LangChain', 'LangGraph', 'Multi-Agent Systems', 'Semantic Search', 'RAG Pipelines', 'Vector Embeddings', 'ChromaDB', 'Prompt Engineering', 'OpenAI API', 'Groq (Llama 3.1 70B)', 'Claude API', 'Ollama', 'MCP'] },
-  { id: 'ml-ds', title: 'ML & DATA SCIENCE', subtitle: 'Modeling & Analysis', color: 'border-primary/40 shadow-[0_0_15px_rgba(251,191,36,0.1)]', dot: 'bg-primary', icon: <BarChart3 size={18} />, startProgress: 0.15, endProgress: 0.40, skills: ['scikit-learn', 'XGBoost', 'LSTM', 'TensorFlow', 'PyTorch', 'A/B Testing', 'SHAP/LIME', 'Knowledge Graphs', 'Sentence-Transformers'] },
-  { id: 'data-eng', title: 'DATA ENGINEERING', subtitle: 'Pipelines & Infrastructure', color: 'border-error/40 shadow-[0_0_15px_rgba(255,100,100,0.1)]', dot: 'bg-error', icon: <Database size={18} />, startProgress: 0.25, endProgress: 0.50, skills: ['Python', 'SQL', 'Apache Spark', 'Databricks', 'ETL/ELT', 'Airflow', 'dbt', 'Azure Data Factory', 'PostgreSQL', 'MongoDB'] },
-  { id: 'cloud-devops', title: 'CLOUD & DEVOPS', subtitle: 'Deployment & Operations', color: 'border-cyber-purple/40 shadow-[0_0_15px_rgba(184,71,255,0.1)]', dot: 'bg-cyber-purple', icon: <Cloud size={18} />, startProgress: 0.45, endProgress: 0.70, skills: ['Azure', 'AWS', 'GCP', 'Docker', 'Kubernetes', 'CI/CD (GitHub Actions)', 'MLOps', 'Model Monitoring'] },
-  { id: 'web-apis', title: 'WEB & APIs', subtitle: 'Interfaces & Integration', color: 'border-neon-green/40 shadow-[0_0_15px_rgba(57,255,20,0.1)]', dot: 'bg-neon-green', icon: <Globe size={18} />, startProgress: 0.55, endProgress: 0.80, skills: ['FastAPI', 'Next.js (React 19)', 'TypeScript', 'JavaScript', 'REST API Design', 'Smart Contract Integration', 'JWT', 'bcrypt'] },
-  { id: 'viz', title: 'VISUALIZATION', subtitle: 'Insights & Dashboards', color: 'border-tertiary/40 shadow-[0_0_15px_rgba(182,237,255,0.1)]', dot: 'bg-tertiary', icon: <PieChart size={18} />, startProgress: 0.65, endProgress: 0.95, skills: ['D3.js', 'Power BI', 'Tableau', 'R'] },
+  {
+    id: 'agentic-llm',
+    title: 'AGENTIC & LLM SYSTEMS',
+    subtitle: 'Stateful Orchestration & DAGs',
+    color: 'border-secondary-container/40 shadow-[0_0_15px_rgba(0,240,255,0.1)]',
+    dot: 'bg-secondary-container',
+    icon: <Brain size={18} />,
+    startProgress: 0.05,
+    endProgress: 0.30,
+    skills: [
+      'LangGraph',
+      'LangChain',
+      'LangSmith',
+      'LlamaIndex',
+      'OpenAI / Anthropic APIs',
+      'Groq (Llama 3.3)',
+      'Ollama',
+      'Multi-Agent Meshes',
+      'Model Context Protocol (MCP)',
+    ],
+  },
+  {
+    id: 'retrieval-db',
+    title: 'RETRIEVAL & DATABASES',
+    subtitle: 'Dense, Sparse & Graph-RAG',
+    color: 'border-primary/40 shadow-[0_0_15px_rgba(251,191,36,0.1)]',
+    dot: 'bg-primary',
+    icon: <Database size={18} />,
+    startProgress: 0.15,
+    endProgress: 0.40,
+    skills: [
+      'ChromaDB',
+      'LanceDB',
+      'Pinecone',
+      'BM25 Sparse Search',
+      'Cohere Rerank v3.5',
+      'PostgreSQL / pgvector',
+      'Redis',
+      'NetworkX Graphs',
+      'HyDE Chunking',
+    ],
+  },
+  {
+    id: 'voice-realtime',
+    title: 'VOICE & REAL-TIME AI',
+    subtitle: 'Sub-Second Streaming Pipelines',
+    color: 'border-neon-green/40 shadow-[0_0_15px_rgba(57,255,20,0.1)]',
+    dot: 'bg-neon-green',
+    icon: <Mic size={18} />,
+    startProgress: 0.25,
+    endProgress: 0.50,
+    skills: [
+      'WebSockets',
+      'PCM Audio Streaming',
+      'Silero VAD',
+      'Deepgram Nova-2',
+      'ElevenLabs',
+      'Amazon Connect / Lex',
+      'Zero-Lag Barge-In',
+      '16kHz Audio Queues',
+    ],
+  },
+  {
+    id: 'backend-systems',
+    title: 'BACKEND & SYSTEMS',
+    subtitle: 'Distributed Async Architectures',
+    color: 'border-cyber-purple/40 shadow-[0_0_15px_rgba(184,71,255,0.1)]',
+    dot: 'bg-cyber-purple',
+    icon: <Server size={18} />,
+    startProgress: 0.45,
+    endProgress: 0.70,
+    skills: [
+      'Python 3.12',
+      'FastAPI',
+      'Asyncio',
+      'Docker Compose',
+      'Kubernetes Manifests',
+      'SQLite / SQLAlchemy 2.0',
+      'FFmpeg Pipelines',
+      'REST & gRPC APIs',
+    ],
+  },
+  {
+    id: 'frontend-viz',
+    title: 'FRONTEND & VISUALIZATION',
+    subtitle: 'Reactive Interfaces & 3D Graphs',
+    color: 'border-tertiary/40 shadow-[0_0_15px_rgba(182,237,255,0.1)]',
+    dot: 'bg-tertiary',
+    icon: <Globe size={18} />,
+    startProgress: 0.55,
+    endProgress: 0.80,
+    skills: [
+      'React 19',
+      'Next.js 16',
+      'TypeScript',
+      'Tailwind CSS',
+      'Framer Motion',
+      'D3.js 3D Force Graphs',
+      'GSAP Animations',
+      'HTML5 Canvas',
+    ],
+  },
+  {
+    id: 'testing-observability',
+    title: 'TESTING & OBSERVABILITY',
+    subtitle: 'Deterministic Evals & CI/CD',
+    color: 'border-error/40 shadow-[0_0_15px_rgba(255,100,100,0.1)]',
+    dot: 'bg-error',
+    icon: <ShieldCheck size={18} />,
+    startProgress: 0.65,
+    endProgress: 0.95,
+    skills: [
+      'Pytest (258+ Tests)',
+      'Ragas Framework',
+      'LangSmith Tracing',
+      'Ruff Linter',
+      'GitHub Actions CI/CD',
+      'LLM-as-Judge Evals',
+      'Pre-Commit Hooks',
+      'AST Linters',
+    ],
+  },
 ];
 
 // Helper to generate a clean circuit path from Start to End with 45-degree angle snapping
@@ -20,14 +136,12 @@ function getCircuitPath(start: Point, end: Point): Point[] {
   const points: Point[] = [start];
   const dx = end.x - start.x;
   const dy = end.y - start.y;
-  
+
   if (Math.abs(dx) > Math.abs(dy)) {
-    // Mostly horizontal step first, then 45-degree jog to destination
     const jogX = start.x + Math.sign(dx) * (Math.abs(dx) - Math.abs(dy));
     points.push({ x: jogX, y: start.y });
     points.push({ x: end.x, y: end.y });
   } else {
-    // Mostly vertical step first, then 45-degree jog to destination
     const jogY = start.y + Math.sign(dy) * (Math.abs(dy) - Math.abs(dx));
     points.push({ x: start.x, y: jogY });
     points.push({ x: end.x, y: end.y });
@@ -46,25 +160,22 @@ export default function SkillsSection() {
     const handleScroll = () => {
       const section = sectionRef.current;
       if (!section) return;
-      
+
       const rect = section.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
-      
-      // Tracing starts when the top of the section reaches 70% of screen height
-      // and completes fully when it reaches -5% of screen height.
-      // This ensures wires only grow as the user actively scrolls through the section content.
+
       const start = viewportHeight * 0.70;
       const end = viewportHeight * -0.05;
       const total = start - end;
       const current = start - rect.top;
-      
+
       const progress = Math.max(0, Math.min(1, current / total));
       setScrollProgress(progress);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // Initial call
-    
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, [sectionRef]);
 
@@ -96,7 +207,7 @@ export default function SkillsSection() {
       if (!section) return;
 
       const rect = section.getBoundingClientRect();
-      
+
       // Sync canvas dimensions
       if (canvas.width !== rect.width || canvas.height !== rect.height) {
         canvas.width = rect.width;
@@ -148,7 +259,7 @@ export default function SkillsSection() {
       ctx.lineWidth = 2.5;
       for (let i = 0; i < 4; i++) {
         ctx.beginPath();
-        ctx.arc(0, 0, 16, i * Math.PI / 2, i * Math.PI / 2 + Math.PI / 4);
+        ctx.arc(0, 0, 16, (i * Math.PI) / 2, (i * Math.PI) / 2 + Math.PI / 4);
         ctx.stroke();
       }
       ctx.restore();
@@ -267,35 +378,39 @@ export default function SkillsSection() {
             <div className="w-2 h-2 rounded-full bg-secondary-container led-indicator" />
             <div className="w-12 h-px bg-glass-border" />
           </div>
-          <span className="font-terminal text-label-mono text-on-surface-variant tracking-widest uppercase">// 02 — CORE MODULES</span>
+          <span className="font-terminal text-label-mono text-on-surface-variant tracking-widest uppercase">// 02 — CORE ARCHITECTURAL MODULES</span>
         </div>
 
         <div className="text-center mb-12" style={{ transitionDelay: '0.1s' }}>
           <h2 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface">
-            SKILL <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-container to-cyber-purple">MATRIX</span>
+            SKILL <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-container via-cyber-purple to-neon-green">MATRIX</span>
           </h2>
-          <p className="font-body text-body-md text-on-surface-variant mt-3">Six specialized modules. One integrated system.</p>
+          <p className="font-body text-body-md text-on-surface-variant mt-3">
+            Six specialized engineering domains. One cohesive production system.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 relative">
           {CLUSTERS.map((cluster, i) => {
             const isConnected = activeCards[cluster.id];
             return (
-              <div 
-                key={cluster.id} 
+              <div
+                key={cluster.id}
                 className={`module-housing rounded-xl p-6 relative overflow-hidden group transition-all duration-500 hover:translate-y-[-4px] border ${
-                  isConnected 
-                    ? 'border-[#00e5ff] shadow-[0_0_22px_rgba(0,229,255,0.22)] scale-[1.01] bg-[#161d24]/85' 
+                  isConnected
+                    ? 'border-[#00e5ff] shadow-[0_0_22px_rgba(0,229,255,0.22)] scale-[1.01] bg-[#161d24]/85'
                     : cluster.color
                 }`}
-                style={{ transitionDelay: `${(i + 1) * 0.1}s` }}
+                style={{ transitionDelay: `${(i + 1) * 0.08}s` }}
               >
                 <div className="heatsink-pattern absolute inset-0 opacity-20 pointer-events-none" />
 
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-4 relative z-10">
-                  <span 
-                    className={`${cluster.dot} w-9 h-9 rounded-lg flex items-center justify-center text-white skill-icon-node relative transition-transform duration-300 ${isConnected ? 'scale-110 shadow-[0_0_12px_currentColor]' : ''}`} 
+                  <span
+                    className={`${cluster.dot} w-9 h-9 rounded-lg flex items-center justify-center text-white skill-icon-node relative transition-transform duration-300 ${
+                      isConnected ? 'scale-110 shadow-[0_0_12px_currentColor]' : ''
+                    }`}
                     data-skill-id={cluster.id}
                   >
                     {cluster.icon}
@@ -304,7 +419,9 @@ export default function SkillsSection() {
                     )}
                   </span>
                   <div>
-                    <h3 className="font-display text-lg font-semibold text-on-surface tracking-wider">{cluster.title}</h3>
+                    <h3 className="font-display text-base md:text-lg font-semibold text-on-surface tracking-wider">
+                      {cluster.title}
+                    </h3>
                     <p className="font-label text-[11px] text-on-surface-variant tracking-wider">{cluster.subtitle}</p>
                   </div>
                 </div>
@@ -312,11 +429,11 @@ export default function SkillsSection() {
                 {/* Skills */}
                 <div className="flex flex-wrap gap-2 relative z-10">
                   {cluster.skills.map((skill) => (
-                    <span 
-                      key={skill} 
+                    <span
+                      key={skill}
                       className={`tech-tag font-label text-[11px] px-2.5 py-1 border rounded cursor-default transition-colors duration-300 ${
-                        isConnected 
-                          ? 'border-[#00e5ff]/30 text-white bg-[#00e5ff]/5 hover:border-[#00e5ff]' 
+                        isConnected
+                          ? 'border-[#00e5ff]/30 text-white bg-[#00e5ff]/5 hover:border-[#00e5ff]'
                           : 'border-outline-variant text-on-surface bg-surface/50'
                       }`}
                     >

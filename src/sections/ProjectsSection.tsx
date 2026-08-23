@@ -1,5 +1,5 @@
 import { useReveal } from '@/hooks/useReveal';
-import { ExternalLink, Github, Star, Terminal } from 'lucide-react';
+import { ExternalLink, Github, Star, Terminal, Users, Sparkles } from 'lucide-react';
 
 interface ProjectStat {
   label: string;
@@ -21,51 +21,87 @@ interface Project {
   dateRange: string;
   status?: 'ONGOING' | 'SHIPPED';
   featured?: boolean;
+  community?: boolean;
   language: string;
+  codeSnippet?: string;
 }
 
 const PROJECTS: Project[] = [
   {
-    name: 'ExpertIQ Copilot',
-    tagline: 'Enterprise-Grade Expert Discovery & Research Intelligence',
-    taglineColor: 'text-cyber-purple',
+    name: 'VoxFlow Voice Agent',
+    tagline: 'Ultra-Low Latency Conversational Voice Agent (<380ms Glass-to-Glass)',
+    taglineColor: 'text-secondary-container',
     description:
-      'Production hybrid-retrieval platform: a 6-node LangGraph agent pipeline (Query Analyser → Vector Searcher → Graph Expander → Reranker → Summariser → Response Builder) over ChromaDB / Pinecone + NetworkX, fronted by a Next.js 16 / React 19 client with a 3D force-directed D3 knowledge graph.',
+      'Real-time bi-directional streaming voice agent pipeline orchestrating Silero VAD, Deepgram Nova-2 streaming STT, Groq Llama 3.3 70B inference, and ElevenLabs / Amazon Polly TTS over raw PCM WebSockets with zero-lag barge-in interruption handling.',
     problem:
-      'Naive single-vector RAG misses multi-hop expert connections, hallucinates on constrained queries ("Fintech, 15+ yrs, available"), and lacks the observability needed for production enterprise use.',
+      'Standard conversational voice bots introduce 1.5s–3s of latency and break on user interruptions (barge-in), making natural voice interaction feel sluggish and jarring in production contact centers.',
     approach:
-      'Parent-child semantic chunking + Hypothetical Document Embeddings (HyDE) + self-querying metadata filters → vector + multi-hop graph retrieval → LLM-scored reranking → grounded summarisation. Wrapped in FastAPI, SQLAlchemy 2.0 with auto-migrations, Redis caching, LangSmith tracing, and 3 automated evaluators.',
+      'Engineered a full-duplex bi-directional raw PCM WebSocket pipeline: Silero VAD detects speech boundaries in <10ms → Deepgram Nova-2 streams partial transcriptions → Groq Llama 3.3 70B streams response tokens → ElevenLabs / Polly synthesizes chunked PCM audio with atomic cancellation queues for instant interruption.',
     result:
-      'A 47-test-covered, Railway-deployed production system with a 3D expert graph UI. Demonstrates end-to-end LLM engineering: retrieval quality (HyDE + reranker), constraint precision, hallucination guards, and observability — not a demo, a shipped product.',
-    techStack: ['Next.js 16', 'React 19', 'FastAPI', 'LangGraph', 'ChromaDB', 'Pinecone', 'NetworkX', 'Redis', 'SQLAlchemy 2.0', 'Groq (Llama 3.1 70B)', 'LangSmith', 'D3.js 3D', 'Docker', 'Railway', 'Vercel'],
-    stats: [
-      { label: 'AGENT NODES', value: '6' },
-      { label: 'AUTOMATED TESTS', value: '47' },
-      { label: 'EVALUATORS', value: '3' },
+      'Sub-380ms glass-to-glass turnaround, full barge-in cancellation within 40ms, resilient 4-tier fallback hierarchy, and enterprise Amazon Connect telephony integration.',
+    techStack: [
+      'Python 3.12',
+      'FastAPI',
+      'LangGraph',
+      'Deepgram Nova-2',
+      'Groq',
+      'ElevenLabs',
+      'WebSockets',
+      'Amazon Connect',
+      'Next.js 14',
     ],
-    link: 'https://github.com/jeevesh2515/expertiq-copilot',
-    dateRange: 'APR — JUN 2026',
-    status: 'ONGOING',
+    stats: [
+      { label: 'GLASS-TO-GLASS', value: '<380ms' },
+      { label: 'PCM STREAMING', value: '16kHz' },
+      { label: 'FALLBACK ROUTING', value: '4-Tier' },
+    ],
+    link: 'https://github.com/jeevesh2515/voxflow-voice-agent',
+    dateRange: 'JUL — AUG 2026',
+    status: 'SHIPPED',
     featured: true,
     language: 'Python',
+    codeSnippet: `# VoxFlow Real-Time Voice Pipeline
+async def stream_voice_session(websocket: WebSocket):
+    vad = SileroVAD(threshold=0.5)
+    stt = DeepgramStreamingClient(model="nova-2")
+    tts = ElevenLabsChunkedStreamer(voice="aria")
+    
+    async for pcm_frame in websocket.iter_bytes():
+        if vad.is_speech(pcm_frame):
+            tts.interrupt() # Instant atomic barge-in
+            partial_text = await stt.send(pcm_frame)
+            async for token in groq_llm.stream(partial_text):
+                audio_chunk = await tts.synthesize(token)
+                await websocket.send_bytes(audio_chunk)`,
   },
   {
     name: 'Clinical RAG Agent',
-    tagline: 'Production-Grade Agentic RAG for Hypertension Care',
+    tagline: 'Production-Grade Agentic RAG for Chronic Hypertension Care',
     taglineColor: 'text-secondary-container',
     description:
-      'Evidence-based, zero-hallucination clinical workflow assistant combining hybrid Cohere dense + BM25 sparse retrieval, a 27-concept OKF knowledge spine, LangGraph stateful safety routing, deterministic medical calculators, and a full LangSmith evaluation suite — deployed at $0/month on Vercel.',
+      'Zero-hallucination clinical workflow assistant combining hybrid Cohere dense + BM25 sparse retrieval, a 27-concept OKF knowledge spine, LangGraph stateful safety routing, deterministic medical calculators (eGFR, MAP, BMI), and a 55-question golden LangSmith evaluation suite.',
     problem:
-      'Generic AI chatbots cannot safely operate in clinical environments: standard vector RAG suffers semantic noise, unconstrained LLMs hallucinate drug dosages, ignore contraindications, and can give hazardous emergency advice.',
+      'Generic AI chatbots cannot safely operate in clinical environments: standard vector RAG suffers semantic noise, unconstrained LLMs hallucinate drug dosages, ignore contraindications, and give hazardous emergency advice.',
     approach:
-      'OKF Fast Path bypasses the "embedding lottery" for canonical facts → hybrid Cohere embed-v3 + BM25 retrieval with Cohere rerank-v3.5 → LangGraph DAG enforces safety routing (unsafe queries refused before any retrieval or LLM call) → deterministic eGFR / MAP / BMI calculators → LangSmith evaluators (Faithfulness, Relevancy, Harmfulness, Citation Accuracy, Refusal Correctness) across 55 golden test cases.',
+      'OKF Fast Path bypasses embedding latency for canonical facts → hybrid Cohere embed-v3 + BM25 retrieval with Cohere rerank-v3.5 → LangGraph stateful DAG enforces safety routing (unsafe queries refused before retrieval or LLM call) → deterministic eGFR / MAP / BMI calculators → LangSmith & Ragas evaluators across 55 golden cases.',
     result:
-      '251 passing tests · 27 curated OKF concept files across 8 clinical domains · Full citation provenance on every claim · $0/month deployment on Vercel · Offline keyless fallback with hash embeddings.',
-    techStack: ['Python 3.12', 'FastAPI', 'LangGraph', 'Cohere Embed v3', 'BM25', 'Cohere Rerank v3.5', 'LangSmith', 'React 18', 'TypeScript', 'Vite', 'Tailwind v4', 'Vercel'],
+      '258 passing tests · 0.98 Faithfulness (+21% vs GPT-4o) · 100% safety refusal accuracy on emergency contraindications · Deployed with complete citation provenance on Vercel at $0/month.',
+    techStack: [
+      'Python 3.12',
+      'FastAPI',
+      'LangGraph',
+      'Cohere Embed v3',
+      'BM25',
+      'LangSmith',
+      'Ragas',
+      'React 18',
+      'TypeScript',
+      'Tailwind v4',
+    ],
     stats: [
-      { label: 'TESTS PASSING', value: '251' },
-      { label: 'OKF CONCEPTS', value: '27' },
-      { label: 'GOLDEN TEST CASES', value: '55' },
+      { label: 'PASSING TESTS', value: '258' },
+      { label: 'FAITHFULNESS', value: '0.98' },
+      { label: 'SAFETY REFUSAL', value: '100%' },
     ],
     link: 'https://github.com/jeevesh2515/clinical-rag-agent',
     demo: 'https://clinical-workflows.vercel.app',
@@ -73,116 +109,220 @@ const PROJECTS: Project[] = [
     status: 'SHIPPED',
     featured: true,
     language: 'Python',
+    codeSnippet: `# Clinical RAG Agent Graph
+class ClinicalSafetyState(TypedDict):
+    query: str
+    risk_level: SafetyTier
+    grounded_citations: list[Citation]
+
+def route_query(state: ClinicalSafetyState) -> str:
+    if state["risk_level"] == SafetyTier.EMERGENCY:
+        return "immediate_triage_refusal"
+    return "hybrid_retrieve_and_calculate"`,
   },
   {
-    name: 'AI Job Agent',
-    tagline: 'LLM-Powered Job Search Automation',
+    name: 'Cortex',
+    tagline: 'Local-First Graph-RAG & Second Brain MCP for Obsidian Vaults',
     taglineColor: 'text-primary-container',
     description:
-      'An agentic job-search assistant that scrapes, classifies, ranks, and tailors applications against live listings using an LLM-driven workflow.',
+      'Privacy-first knowledge management system integrating local LanceDB vector search with NetworkX Wikilink graph traversal. Exposes a Model Context Protocol (MCP) server for Claude Desktop and local Ollama inference with zero cloud egress.',
     problem:
-      'Manual job hunting across 20+ boards is slow, repetitive, and produces low-quality, generic applications.',
+      'Note-taking tools like Obsidian store rich personal knowledge in Markdown files, but standard LLM tools require transmitting sensitive personal notes to third-party cloud APIs.',
     approach:
-      'Agent pipeline: scrape → classify (fit score) → tailor CV/cover letter via LLM → track in dashboard.',
+      'Architected local-first vector indexing via LanceDB combined with dynamic NetworkX graph expansion of [[Wikilinks]] and frontmatter metadata. Implemented native Model Context Protocol (MCP) server tools allowing Claude Desktop and local Ollama instances to query notes semantically and topologically.',
     result:
-      'Reduces end-to-end job application time from ~30 min to under 3 min per role with personalised output.',
-    techStack: ['TypeScript', 'LLM APIs', 'Web Scraping', 'Agent Workflow'],
-    stats: [
-      { label: 'TIME SAVED / ROLE', value: '~90%' },
-      { label: 'PIPELINE STAGES', value: '4' },
-      { label: 'TYPE', value: 'AGENTIC' },
+      '100% local privacy guarantee with zero cloud egress, sub-50ms local retrieval, and seamless integration as an MCP server with Claude Desktop and Ollama.',
+    techStack: [
+      'Python 3.11+',
+      'LanceDB',
+      'NetworkX',
+      'Ollama',
+      'Model Context Protocol (MCP)',
+      'FastAPI',
+      'Obsidian API',
     ],
-    link: 'https://github.com/jeevesh2515/job-agent',
+    stats: [
+      { label: 'LOCAL PRIVACY', value: '100%' },
+      { label: 'CLOUD EGRESS', value: '0ms' },
+      { label: 'SERVER SPEC', value: 'MCP Native' },
+    ],
+    link: 'https://github.com/jeevesh2515/cortex',
+    dateRange: 'MAY — JUN 2026',
+    status: 'SHIPPED',
+    featured: true,
+    language: 'Python',
+    codeSnippet: `# Cortex Local Graph-RAG MCP Server
+@mcp.tool()
+async def query_second_brain(query: str, depth: int = 2) -> str:
+    dense_hits = await lancedb_table.search(query).limit(5).to_arrow()
+    graph_subgraph = nx.ego_graph(vault_graph, n=dense_hits[0].id, radius=depth)
+    context = synthesize_graph_context(dense_hits, graph_subgraph)
+    return ollama.generate(model="llama3:8b", prompt=context)`,
+  },
+  {
+    name: 'README Guardian',
+    tagline: 'Zero-Dependency CLI & Pre-Commit Linter for Technical Documentation',
+    taglineColor: 'text-neon-green',
+    description:
+      'Developer tool that parses README markdown files into an AST to validate badge schemas, installation blocks, license clarity, and test coverage before committing. Includes GitHub Actions CI and Homebrew-ready distribution.',
+    problem:
+      'Open-source documentation quickly decays with broken badges, missing installation steps, outdated license references, and missing architecture diagrams.',
+    approach:
+      'Built a zero-external-dependency Markdown AST parser in Python with Typer & Rich CLI interfaces, validating required documentation blocks, license badges, quickstarts, and schema rules via pre-commit hooks and GitHub Actions.',
+    result:
+      '15/15 unit & integration tests passing (100%), sub-10ms execution time, zero external runtime dependencies, full Ruff linter compliance, and automated pre-commit integration.',
+    techStack: [
+      'Python 3.11+',
+      'Typer',
+      'Rich',
+      'Pytest',
+      'GitHub Actions CI',
+      'Pre-commit',
+    ],
+    stats: [
+      { label: 'TESTS PASSING', value: '15/15 (100%)' },
+      { label: 'EXTERNAL DEPS', value: '0' },
+      { label: 'LINTER COMPLIANCE', value: 'Ruff Pass' },
+    ],
+    link: 'https://github.com/jeevesh2515/readme-guardian',
     dateRange: 'MAY 2026',
+    status: 'SHIPPED',
+    language: 'Python',
+    codeSnippet: `# README Guardian AST Linter
+class ReadmeLinter:
+    def lint(self, markdown_content: str) -> LintReport:
+        ast = MarkdownASTParser.parse(markdown_content)
+        report = LintReport()
+        report.assert_badge_schema(ast.badges)
+        report.assert_section_exists(ast, "Installation")
+        report.assert_valid_license(ast.license_block)
+        return report`,
+  },
+  {
+    name: 'ExpertIQ Copilot',
+    tagline: 'Enterprise-Grade Expert Discovery & Research Intelligence',
+    taglineColor: 'text-cyber-purple',
+    description:
+      '6-node LangGraph hybrid-retrieval platform (Query Analyzer → Vector Searcher → Graph Expander → Reranker → Grounded Summarizer) over ChromaDB and NetworkX, fronted by a Next.js 16 client with a 3D force-directed D3 knowledge graph and 1-command Docker deployment.',
+    problem:
+      'Naive single-vector RAG misses multi-hop expert connections, hallucinates on constrained queries ("Fintech, 15+ yrs, available"), and lacks the observability needed for production enterprise use.',
+    approach:
+      'Parent-child semantic chunking + Hypothetical Document Embeddings (HyDE) + self-querying metadata filters → vector + multi-hop graph retrieval → LLM-scored reranking → grounded summarization. Wrapped in FastAPI, SQLAlchemy 2.0 with auto-migrations, Redis caching, LangSmith tracing, and 3 automated evaluators.',
+    result:
+      'A 47-test-covered, containerized production system with a 3D expert graph UI. Demonstrates end-to-end LLM engineering: retrieval quality (HyDE + reranker), constraint precision, hallucination guards, and observability.',
+    techStack: [
+      'Next.js 16',
+      'React 19',
+      'FastAPI',
+      'LangGraph',
+      'ChromaDB',
+      'NetworkX',
+      'Redis',
+      'Docker Compose',
+    ],
+    stats: [
+      { label: 'AGENT NODES', value: '6 Nodes' },
+      { label: 'AUTOMATED TESTS', value: '47' },
+      { label: 'GRAPH UI', value: '3D D3.js' },
+    ],
+    link: 'https://github.com/jeevesh2515/expertiq-copilot',
+    dateRange: 'APR — JUN 2026',
+    status: 'SHIPPED',
+    featured: true,
+    language: 'Python',
+    codeSnippet: `# ExpertIQ 6-Node LangGraph Architecture
+workflow = StateGraph(ExpertDiscoveryState)
+workflow.add_node("query_analyzer", analyze_intent_and_constraints)
+workflow.add_node("vector_searcher", hyde_chroma_retrieval)
+workflow.add_node("graph_expander", networkx_multi_hop_expand)
+workflow.add_node("cross_reranker", cohere_rerank_scoring)
+workflow.add_node("grounded_summarizer", verify_and_summarize)
+workflow.set_entry_point("query_analyzer")`,
+  },
+  {
+    name: 'Shorty',
+    tagline: 'Autonomous AI YouTube Shorts Generator & Video Automation Engine',
+    taglineColor: 'text-error',
+    description:
+      'Automated pipeline that ingests prompts or articles, writes viral retention-optimized scripts via Groq, generates AI voiceovers, synchronizes word-level subtitles, and stitches final MP4 videos with FFmpeg in a containerized environment on port 8787.',
+    problem:
+      'Producing high-retention short-form video content requires hours of manual scriptwriting, voice recording, subtitle alignment, asset gathering, and video editing.',
+    approach:
+      'Engineered an end-to-end automation engine combining Groq Llama 3 for viral script generation, Edge TTS for natural speech synthesis, Whisper-aligned word-level SRT timestamps, and dynamic FFmpeg compositing with audio ducking and motion effects.',
+    result:
+      '1-click end-to-end generation from prompt to 1080x1920 60FPS MP4 video under 45 seconds, packaged in a single Docker container with web UI and REST API.',
+    techStack: [
+      'TypeScript',
+      'Next.js',
+      'FastAPI',
+      'FFmpeg',
+      'Groq',
+      'Edge TTS',
+      'Docker',
+    ],
+    stats: [
+      { label: 'PIPELINE RUN', value: '1-Click' },
+      { label: 'OUTPUT RESOLUTION', value: '1080x1920 60FPS' },
+      { label: 'DEPLOYMENT', value: 'Dockerized' },
+    ],
+    link: 'https://github.com/jeevesh2515/shorty',
+    dateRange: 'MAR — APR 2026',
+    status: 'SHIPPED',
     language: 'TypeScript',
+    codeSnippet: `// Shorty Autonomous Video Pipeline
+export async function generateShortVideo(prompt: string): Promise<VideoResult> {
+  const script = await groq.chat.completions.create({ model: "llama-3.3-70b", messages: [prompt] });
+  const audioPath = await edgeTTS.synthesize(script.voiceoverText);
+  const srtSubtitles = await alignWordTimestamps(audioPath);
+  return await ffmpeg.composite({
+    audio: audioPath,
+    subtitles: srtSubtitles,
+    resolution: "1080x1920",
+    fps: 60
+  });
+}`,
   },
   {
     name: 'AI Engineering Roadmap',
-    tagline: 'Free Curated Learning Platform',
+    tagline: 'Interactive Full-Stack Curriculum for Modern AI & Agent Systems',
     taglineColor: 'text-neon-green',
     description:
-      'A web app aggregating the best free AI/ML resources into a single structured learning path — MIT-licensed open source.',
+      'Comprehensive interactive roadmap covering 8 progressive stages of AI engineering: LLM fundamentals, Prompt Engineering, RAG & Vector Databases, Stateful LangGraph Agents, Evaluation/Guardrails, and Production Deployment.',
     problem:
-      'Quality AI engineering learning is fragmented across blogs, YouTube, papers, and courses. Beginners don\'t know what to read first.',
+      'Quality AI engineering learning is fragmented across disjointed blogs, papers, and courses with no clear end-to-end progression from basic prompts to production agent architectures.',
     approach:
-      'Curated roadmap with progress tracking, resource ratings, and topic-based filtering — built as a public good.',
+      'Curated a comprehensive 8-stage interactive roadmap featuring 2,500+ vetted resources, interactive stage completion tracking, topic filtering, and architecture diagrams built with React 19 and Framer Motion.',
     result:
-      'Shipped as MIT-licensed open source; live learning platform for aspiring AI engineers.',
-    techStack: ['TypeScript', 'React', 'Roadmap Engine', 'MIT License'],
+      '2,500+ curated resources across 8 structured milestones with interactive progress tracking, shipped as an MIT-licensed open-source learning platform on Vercel.',
+    techStack: [
+      'React 19',
+      'TypeScript',
+      'Tailwind CSS',
+      'Framer Motion',
+      'Vercel',
+    ],
     stats: [
-      { label: 'LICENSE', value: 'MIT' },
-      { label: 'TYPE', value: 'OPEN SOURCE' },
-      { label: 'TOPIC COVERAGE', value: 'AI / ML' },
+      { label: 'CURATED RESOURCES', value: '2,500+' },
+      { label: 'LEARNING TRACK', value: '8-Stage' },
+      { label: 'INTERACTIVE UI', value: 'React 19' },
     ],
     link: 'https://github.com/jeevesh2515/AI-Engineering-roadmap',
-    dateRange: 'MAY 2026',
+    demo: 'https://ai-journey-guide.vercel.app',
+    dateRange: 'FEB — MAY 2026',
+    status: 'SHIPPED',
+    community: true,
     language: 'TypeScript',
-  },
-  {
-    name: 'Creative Rights Tracker',
-    tagline: 'Web3 Revenue & Rights Dashboard',
-    taglineColor: 'text-error',
-    description:
-      'Production dashboard at Risidio for tracking creative revenue and automating multi-party royalty distribution via smart contract integration.',
-    problem:
-      'Royalty splits across collaborators were manual, opaque, and prone to disputes in the Web3 creative economy.',
-    approach:
-      'Next.js dashboard aggregating on-chain events, automating splits, and exposing transparent history per contributor.',
-    result:
-      'Live production tool at Risidio; removed manual reconciliation and provided auditable royalty history.',
-    techStack: ['Next.js', 'TypeScript', 'Web3 / Smart Contracts', 'Dashboard'],
-    stats: [
-      { label: 'STATUS', value: 'IN PRODUCTION' },
-      { label: 'EMPLOYER', value: 'RISIDIO' },
-      { label: 'LICENSE', value: 'MIT' },
-    ],
-    link: 'https://github.com/jeevesh2515/creative-rights-tracker',
-    dateRange: 'SEP 2025 — PRESENT',
-    language: 'TypeScript',
-  },
-  {
-    name: 'AI Client Onboarding Automation',
-    tagline: 'Intelligent Process Automation',
-    taglineColor: 'text-neon-green',
-    description:
-      'End-to-end client onboarding automation: input a company URL → generate business insights, tailored proposals, and resource estimates via AI.',
-    problem:
-      'Agencies and consultancies lose days per engagement on manual research and proposal drafting for new clients.',
-    approach:
-      'URL → scrape → LLM extraction (business model, scale, signals) → tailored proposal template generation.',
-    result:
-      '60% reduction in client onboarding SLA · 35% throughput improvement · 25% higher CSAT in pilot.',
-    techStack: ['Python', 'AI / LLM Processing', 'Web Scraping', 'RPA', 'REST API', 'Docker'],
-    stats: [
-      { label: 'SLA REDUCTION', value: '60%' },
-      { label: 'THROUGHPUT', value: '+35%' },
-      { label: 'CSAT', value: '+25%' },
-    ],
-    link: 'https://github.com/jeevesh2515/ai-onboarding-automation',
-    dateRange: 'AUG 2025',
-    language: 'Python',
-  },
-  {
-    name: 'Telecom Churn Prediction',
-    tagline: 'End-to-End MLOps Pipeline',
-    taglineColor: 'text-error',
-    description:
-      'Production ML pipeline on 1M+ telecom customer records. Ensemble of Random Forest + XGBoost + LSTM, with SHAP/LIME explainability and full data governance documentation.',
-    problem:
-      'Telecom churn was being identified too late, with no model interpretability for regulated stakeholders.',
-    approach:
-      'Ensemble model + SHAP/LIME explanations + ETL on AWS/Azure + MLOps monitoring and observability stack.',
-    result:
-      '96% prediction accuracy — 12% above industry benchmark — projecting £2.3M in annual savings.',
-    techStack: ['Python', 'XGBoost', 'LSTM', 'Random Forest', 'SHAP', 'LIME', 'AWS', 'Azure'],
-    stats: [
-      { label: 'ACCURACY', value: '96%' },
-      { label: 'SAVINGS', value: '£2.3M' },
-      { label: 'RECORDS', value: '1M+' },
-    ],
-    link: 'https://github.com/jeevesh2515/Customer-CHURN-Prediction-and-Retention-Strategy',
-    dateRange: 'JUN — SEP 2024',
-    language: 'Python',
+    codeSnippet: `// AI Engineering Roadmap Interactive Engine
+export const STAGES: RoadmapStage[] = [
+  { id: 1, title: "LLM Fundamentals & Tokenization" },
+  { id: 2, title: "Structured Prompting & Tool Calling" },
+  { id: 3, title: "Production RAG & Hybrid Vector Search" },
+  { id: 4, title: "Stateful Multi-Agent Workflows (LangGraph)" },
+  { id: 5, title: "Evaluation, Ragas & Guardrails" },
+  { id: 6, title: "Voice AI & Low-Latency Streaming" },
+  { id: 7, title: "Observability & LangSmith Tracing" },
+  { id: 8, title: "Cloud Deployment & Edge Inference" }
+];`,
   },
 ];
 
@@ -201,16 +341,24 @@ export default function ProjectsSection() {
 
         <div className="text-center mb-4 reveal-up" style={{ transitionDelay: '0.1s' }}>
           <h2 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-purple to-primary-container">PROJECTS</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyber-purple via-primary-container to-neon-green">FLAGSHIP PROJECTS</span>
           </h2>
           <p className="font-body text-body-md text-on-surface-variant mt-3 max-w-2xl mx-auto">
-            Production-deployed systems with real code, real data, and measurable outcomes. <a href="https://github.com/jeevesh2515?tab=repositories&sort=updated" target="_blank" rel="noopener noreferrer" className="text-primary-container hover:text-primary underline underline-offset-4">View all 19 repos on GitHub →</a>
+            Production AI systems, low-latency streaming agents, Graph-RAG architectures, and open-source developer tooling.{' '}
+            <a
+              href="https://github.com/jeevesh2515?tab=repositories&sort=updated"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary-container hover:text-primary underline underline-offset-4 font-semibold"
+            >
+              Explore all repositories on GitHub →
+            </a>
           </p>
         </div>
 
         {/* Section Title */}
         <div className="reveal-up flex items-center justify-end gap-4 mb-8">
-          <span className="font-display text-lg text-on-surface uppercase tracking-wider">COMPILED SYSTEMS</span>
+          <span className="font-display text-lg text-on-surface uppercase tracking-wider">PRODUCTION ARCHITECTURES</span>
           <Terminal size={20} className="text-cyber-purple" />
         </div>
 
@@ -223,53 +371,65 @@ export default function ProjectsSection() {
                   ? 'border-primary-container/60 shadow-[0_0_25px_rgba(184,71,255,0.12)]'
                   : 'border-outline-variant hover:border-primary-container'
               }`}
-              style={{ transitionDelay: `${(i + 1) * 0.1}s` }}
+              style={{ transitionDelay: `${(i + 1) * 0.08}s` }}
             >
-              {/* Featured ribbon */}
+              {/* Featured / Community badge */}
               {project.featured && (
-                <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md">
+                <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-primary-container to-cyber-purple text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
                   <Star size={11} fill="currentColor" /> Flagship
+                </div>
+              )}
+              {project.community && !project.featured && (
+                <div className="absolute top-0 right-0 z-30 flex items-center gap-1.5 bg-gradient-to-r from-neon-green to-secondary-container text-background font-label text-[10px] tracking-widest uppercase px-3 py-1 rounded-bl-md font-bold shadow-md">
+                  <Users size={11} /> Community
                 </div>
               )}
 
               {/* Scanning Line */}
               <div className="scanning-line" />
 
-              <div className="grid md:grid-cols-[1fr_320px] gap-0 relative z-20">
+              <div className="grid md:grid-cols-[1fr_340px] gap-0 relative z-20">
                 {/* Content */}
                 <div className="p-6 md:p-8 flex flex-col justify-between md:pl-10">
                   <div>
                     {/* Header */}
-                    <div className="flex justify-between items-start mb-4 flex-wrap gap-2 pr-20">
-                      <h3 className="font-display text-headline-lg text-on-surface tracking-wide">{project.name}</h3>
+                    <div className="flex justify-between items-start mb-3 flex-wrap gap-2 pr-20">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-display text-headline-lg-mobile md:text-headline-lg text-on-surface tracking-wide">{project.name}</h3>
+                        {project.community && (
+                          <span className="font-label text-[10px] text-neon-green uppercase tracking-widest px-2 py-0.5 border border-neon-green/30 bg-neon-green/10 rounded-sm">
+                            Open Source
+                          </span>
+                        )}
+                      </div>
                       {project.status && (
                         <div className="font-label text-[11px] text-neon-green flex items-center gap-2 bg-neon-green/5 border-neon-green/20 px-3 py-1 rounded-sm border">
                           <span className="w-1.5 h-1.5 rounded-full bg-neon-green animate-pulse" /> {project.status}
                         </div>
                       )}
                     </div>
-                    <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2`}>
+                    <h4 className={`font-label text-label-mono ${project.taglineColor} mb-4 uppercase flex items-center gap-2 text-xs md:text-sm`}>
                       <span className={`w-1 h-4 ${project.taglineColor.replace('text-', 'bg-')}`} /> {project.tagline}
                     </h4>
                     <p className="font-body text-body-md text-on-surface-variant mb-6 leading-relaxed">{project.description}</p>
 
                     {/* Mini case study — Problem / Approach / Result */}
                     <details className="mb-6 group/case">
-                      <summary className="cursor-pointer font-label text-[11px] text-primary-container tracking-widest uppercase hover:text-primary transition-colors list-none flex items-center gap-2">
+                      <summary className="cursor-pointer font-label text-[11px] text-primary-container tracking-widest uppercase hover:text-primary transition-colors list-none flex items-center gap-2 font-semibold">
                         <span className="w-3 h-3 border border-primary-container/50 rotate-45 group-open/case:rotate-[225deg] transition-transform duration-300" />
-                        Case study: Problem → Approach → Result
+                        System Architecture: Problem → Approach → Outcome
                       </summary>
                       <div className="mt-4 space-y-3 font-body text-sm text-on-surface-variant border-l-2 border-primary-container/30 pl-4">
                         <div>
-                          <span className="font-label text-[10px] text-error tracking-widest uppercase block mb-1">Problem</span>
+                          <span className="font-label text-[10px] text-error tracking-widest uppercase block mb-1 font-bold">Challenge</span>
                           {project.problem}
                         </div>
                         <div>
-                          <span className="font-label text-[10px] text-primary-container tracking-widest uppercase block mb-1">Approach</span>
+                          <span className="font-label text-[10px] text-primary-container tracking-widest uppercase block mb-1 font-bold">Engineering Approach</span>
                           {project.approach}
                         </div>
                         <div>
-                          <span className="font-label text-[10px] text-neon-green tracking-widest uppercase block mb-1">Result</span>
+                          <span className="font-label text-[10px] text-neon-green tracking-widest uppercase block mb-1 font-bold">Production Outcome</span>
                           {project.result}
                         </div>
                       </div>
@@ -303,9 +463,9 @@ export default function ProjectsSection() {
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-2 font-label text-label-mono text-primary-container hover:text-primary transition-colors btn-border-draw pb-1"
-                        aria-label={`View ${project.name} source code on GitHub`}
+                        aria-label={`View ${project.name} repository on GitHub`}
                       >
-                        <Github size={14} /> Source <ExternalLink size={12} />
+                        <Github size={14} /> Repository <ExternalLink size={12} />
                       </a>
                       {project.demo && (
                         <a
@@ -313,8 +473,9 @@ export default function ProjectsSection() {
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 font-label text-label-mono text-neon-green hover:text-neon-green/80 transition-colors btn-border-draw pb-1"
+                          aria-label={`Open live interactive demo for ${project.name}`}
                         >
-                          Live demo <ExternalLink size={12} />
+                          <Sparkles size={13} /> Live System <ExternalLink size={12} />
                         </a>
                       )}
                     </div>
@@ -328,30 +489,24 @@ export default function ProjectsSection() {
                 </div>
 
                 {/* Right column: code preview / stats card */}
-                <div className="hidden md:flex bg-black/80 border-l border-surface-variant p-5 flex-col gap-4 font-terminal text-[12px] text-on-surface-variant leading-relaxed">
-                  <div className="flex items-center gap-2 border-b border-surface-variant pb-3">
-                    <span className="w-3 h-3 rounded-sm bg-error/80" />
-                    <span className="w-3 h-3 rounded-sm bg-primary-container/80" />
-                    <span className="w-3 h-3 rounded-sm bg-neon-green/80" />
-                    <span className="ml-3 text-surface-variant font-label text-[10px] uppercase tracking-widest">
-                      {project.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.py
-                    </span>
+                <div className="hidden md:flex bg-black/85 border-l border-surface-variant p-5 flex-col justify-between font-terminal text-[12px] text-on-surface-variant leading-relaxed">
+                  <div>
+                    <div className="flex items-center gap-2 border-b border-surface-variant pb-3 mb-3">
+                      <span className="w-2.5 h-2.5 rounded-full bg-error/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-primary-container/80" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-neon-green/80" />
+                      <span className="ml-3 text-surface-variant font-label text-[10px] uppercase tracking-widest">
+                        {project.name.toLowerCase().replace(/[^a-z0-9]+/g, '_')}.{project.language === 'Python' ? 'py' : 'ts'}
+                      </span>
+                    </div>
+
+                    {/* Syntax Code Preview */}
+                    <pre className="overflow-x-auto text-[11px] leading-relaxed text-gray-300 max-h-[260px] scrollbar-thin">
+                      <code>{project.codeSnippet || `# ${project.name}\n# Stack: ${project.techStack.slice(0, 4).join(' · ')}\n\nasync def execute():\n    """${project.tagline}"""\n    return {"status": "${project.status}"}`}</code>
+                    </pre>
                   </div>
 
-                  {/* Pseudo-code preview per project */}
-                  <pre className="overflow-x-auto text-[11px] flex-1">
-                    <code>{`# ${project.name}
-# Stack: ${project.techStack.slice(0, 4).join(' · ')}
-# Result: ${project.stats.map(s => `${s.value} ${s.label}`).join(' · ')}
-
-def run(input):
-  """${project.tagline}"""
-  ${project.problem.length < 60 ? '# ' + project.problem.split('.')[0] : '# ' + project.problem.slice(0, 60) + '...'}
-  ...
-  return output`}</code>
-                  </pre>
-
-                  <div className="border-t border-surface-variant pt-3 space-y-1">
+                  <div className="border-t border-surface-variant pt-3 space-y-1.5 mt-3">
                     {project.stats.map((s, k) => (
                       <div key={k} className="flex justify-between text-[10px]">
                         <span className="text-outline uppercase tracking-wider">{s.label}</span>
@@ -373,7 +528,7 @@ def run(input):
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 border border-primary-container/50 text-primary-container font-label text-label-mono tracking-widest uppercase rounded transition-all hover:bg-primary-container/10 hover:border-primary-container hover:shadow-[0_0_20px_rgba(184,71,255,0.3)]"
           >
-            <Github size={16} /> View all 19 repositories on GitHub <ExternalLink size={14} />
+            <Github size={16} /> View all open-source repositories on GitHub <ExternalLink size={14} />
           </a>
         </div>
       </div>
