@@ -131,6 +131,25 @@ Deploying your portfolio to Vercel takes less than a minute:
 
 ---
 
+## 📊 Analytics (PostHog)
+
+The site loads the [PostHog](https://posthog.com) SDK in `src/main.tsx`. PostHog captures a
+`$pageview` on load and autocaptures clicks, so web analytics, product analytics, and session
+replay start to fill up without any manual event code.
+
+The SDK falls back to the built-in project key and the EU host. To send data to a different
+project, set these environment variables (for local runs, put them in a `.env` file; for Vercel,
+add them under **Project Settings ➔ Environment Variables**):
+
+```bash
+VITE_PUBLIC_POSTHOG_KEY=phc_your_project_key
+VITE_PUBLIC_POSTHOG_HOST=https://eu.i.posthog.com
+```
+
+Both variables use the `VITE_PUBLIC_` prefix, so Vite makes them available in the browser build.
+
+---
+
 ## 📄 License & Copyright
 
 This project is proprietary. All rights reserved. You may view the source code for educational purposes, but you do not have permission to copy, modify, distribute, or host this website or any of its components under your own name.
